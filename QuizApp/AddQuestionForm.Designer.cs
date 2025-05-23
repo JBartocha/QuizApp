@@ -30,10 +30,9 @@
         {
             textBox1 = new TextBox();
             button1 = new Button();
-            textBox2 = new TextBox();
+            textBox_MainQuestionText = new TextBox();
             label1 = new Label();
             label2 = new Label();
-            buttonTest = new Button();
             label3 = new Label();
             textBox_LinkAddress = new TextBox();
             button2 = new Button();
@@ -47,12 +46,14 @@
             button6 = new Button();
             textBox_PictureDescription = new TextBox();
             label5 = new Label();
+            textBox_Title = new TextBox();
+            label6 = new Label();
             SuspendLayout();
             // 
             // textBox1
             // 
             textBox1.Font = new Font("Segoe UI", 18F);
-            textBox1.Location = new Point(12, 284);
+            textBox1.Location = new Point(12, 347);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(504, 39);
             textBox1.TabIndex = 0;
@@ -60,7 +61,7 @@
             // button1
             // 
             button1.ImageAlign = ContentAlignment.BottomCenter;
-            button1.Location = new Point(522, 284);
+            button1.Location = new Point(522, 347);
             button1.Name = "button1";
             button1.Size = new Size(129, 39);
             button1.TabIndex = 1;
@@ -68,20 +69,20 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
-            // textBox2
+            // textBox_MainQuestionText
             // 
-            textBox2.Font = new Font("Segoe UI", 18F);
-            textBox2.Location = new Point(12, 33);
-            textBox2.Multiline = true;
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(1326, 224);
-            textBox2.TabIndex = 2;
+            textBox_MainQuestionText.Font = new Font("Segoe UI", 18F);
+            textBox_MainQuestionText.Location = new Point(12, 33);
+            textBox_MainQuestionText.Multiline = true;
+            textBox_MainQuestionText.Name = "textBox_MainQuestionText";
+            textBox_MainQuestionText.Size = new Size(1326, 224);
+            textBox_MainQuestionText.TabIndex = 2;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 12F);
-            label1.Location = new Point(12, 260);
+            label1.Location = new Point(12, 323);
             label1.Name = "label1";
             label1.Size = new Size(79, 21);
             label1.TabIndex = 3;
@@ -97,22 +98,11 @@
             label2.TabIndex = 4;
             label2.Text = "Otázka:";
             // 
-            // buttonTest
-            // 
-            buttonTest.ImageAlign = ContentAlignment.BottomCenter;
-            buttonTest.Location = new Point(1209, 678);
-            buttonTest.Name = "buttonTest";
-            buttonTest.Size = new Size(129, 39);
-            buttonTest.TabIndex = 7;
-            buttonTest.Text = "TEST";
-            buttonTest.UseVisualStyleBackColor = true;
-            buttonTest.Click += buttonTest_Click;
-            // 
             // label3
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 12F);
-            label3.Location = new Point(12, 326);
+            label3.Location = new Point(12, 389);
             label3.Name = "label3";
             label3.Size = new Size(175, 21);
             label3.TabIndex = 5;
@@ -121,7 +111,7 @@
             // textBox_LinkAddress
             // 
             textBox_LinkAddress.Font = new Font("Segoe UI", 18F);
-            textBox_LinkAddress.Location = new Point(12, 350);
+            textBox_LinkAddress.Location = new Point(12, 413);
             textBox_LinkAddress.Name = "textBox_LinkAddress";
             textBox_LinkAddress.Size = new Size(504, 39);
             textBox_LinkAddress.TabIndex = 8;
@@ -129,7 +119,7 @@
             // button2
             // 
             button2.ImageAlign = ContentAlignment.BottomCenter;
-            button2.Location = new Point(12, 395);
+            button2.Location = new Point(12, 458);
             button2.Name = "button2";
             button2.Size = new Size(350, 39);
             button2.TabIndex = 9;
@@ -137,10 +127,10 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
-            // TextBox_FilePath
+            // textBox_FilePath
             // 
             textBox_FilePath.Font = new Font("Segoe UI", 12F);
-            textBox_FilePath.Location = new Point(12, 440);
+            textBox_FilePath.Location = new Point(12, 503);
             textBox_FilePath.Multiline = true;
             textBox_FilePath.Name = "textBox_FilePath";
             textBox_FilePath.ReadOnly = true;
@@ -150,7 +140,7 @@
             // button3
             // 
             button3.ImageAlign = ContentAlignment.BottomCenter;
-            button3.Location = new Point(368, 395);
+            button3.Location = new Point(368, 458);
             button3.Name = "button3";
             button3.Size = new Size(148, 39);
             button3.TabIndex = 11;
@@ -174,7 +164,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new Font("Segoe UI", 12F);
-            label4.Location = new Point(12, 578);
+            label4.Location = new Point(12, 641);
             label4.Name = "label4";
             label4.Size = new Size(132, 21);
             label4.TabIndex = 14;
@@ -184,7 +174,7 @@
             // 
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(150, 578);
+            comboBox1.Location = new Point(150, 641);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(366, 23);
             comboBox1.TabIndex = 15;
@@ -224,7 +214,7 @@
             // textBox_PictureDescription
             // 
             textBox_PictureDescription.Font = new Font("Segoe UI", 18F);
-            textBox_PictureDescription.Location = new Point(12, 516);
+            textBox_PictureDescription.Location = new Point(12, 579);
             textBox_PictureDescription.Name = "textBox_PictureDescription";
             textBox_PictureDescription.Size = new Size(504, 39);
             textBox_PictureDescription.TabIndex = 19;
@@ -233,17 +223,37 @@
             // 
             label5.AutoSize = true;
             label5.Font = new Font("Segoe UI", 12F);
-            label5.Location = new Point(12, 488);
+            label5.Location = new Point(12, 551);
             label5.Name = "label5";
             label5.Size = new Size(113, 21);
             label5.TabIndex = 20;
             label5.Text = "Popis Obrázku:";
+            // 
+            // textBox_Title
+            // 
+            textBox_Title.Font = new Font("Segoe UI", 18F);
+            textBox_Title.Location = new Point(12, 284);
+            textBox_Title.Name = "textBox_Title";
+            textBox_Title.Size = new Size(504, 39);
+            textBox_Title.TabIndex = 21;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 12F);
+            label6.Location = new Point(12, 260);
+            label6.Name = "label6";
+            label6.Size = new Size(107, 21);
+            label6.TabIndex = 22;
+            label6.Text = "TitulekOtazky:";
             // 
             // AddQuestionForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1350, 729);
+            Controls.Add(label6);
+            Controls.Add(textBox_Title);
             Controls.Add(label5);
             Controls.Add(textBox_PictureDescription);
             Controls.Add(button6);
@@ -256,11 +266,10 @@
             Controls.Add(textBox_FilePath);
             Controls.Add(button2);
             Controls.Add(textBox_LinkAddress);
-            Controls.Add(buttonTest);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(textBox2);
+            Controls.Add(textBox_MainQuestionText);
             Controls.Add(button1);
             Controls.Add(textBox1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
@@ -274,10 +283,9 @@
 
         private TextBox textBox1;
         private Button button1;
-        private TextBox textBox2;
+        private TextBox textBox_MainQuestionText;
         private Label label1;
         private Label label2;
-        private Button buttonTest;
         private Label label3;
         private TextBox textBox_LinkAddress;
         private Button button2;
@@ -291,5 +299,7 @@
         private Button button6;
         private TextBox textBox_PictureDescription;
         private Label label5;
+        private TextBox textBox_Title;
+        private Label label6;
     }
 }

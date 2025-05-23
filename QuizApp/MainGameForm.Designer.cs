@@ -49,12 +49,12 @@
             panel2.Controls.Add(button1);
             panel2.Location = new Point(12, 614);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1316, 103);
+            panel2.Size = new Size(1312, 103);
             panel2.TabIndex = 1;
             // 
             // button_next
             // 
-            button_next.Location = new Point(1176, 28);
+            button_next.Location = new Point(1172, 28);
             button_next.Name = "button_next";
             button_next.Size = new Size(137, 49);
             button_next.TabIndex = 4;
@@ -111,7 +111,7 @@
             // 
             // panel1
             // 
-            panel1.Location = new Point(542, 396);
+            panel1.Location = new Point(1113, 396);
             panel1.Name = "panel1";
             panel1.Size = new Size(212, 212);
             panel1.TabIndex = 4;

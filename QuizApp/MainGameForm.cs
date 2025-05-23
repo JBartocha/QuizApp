@@ -20,10 +20,18 @@ namespace QuizApp
         PeriodicTimer _Timer;
         readonly int _QuestionTime = 60;
         bool _answerSelected = false;
+        
+        Question _question = new Question();
 
         public MainGameForm()
         {
             InitializeComponent();
+
+            #pragma warning disable CS8602 // Dereference of a possibly null reference.
+            panel1.GetType().GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance
+                | System.Reflection.BindingFlags.NonPublic).SetValue(panel1, true, null);
+            #pragma warning restore CS8602 // Dereference of a possibly null reference.
+
             richTextBox1.Font = new Font("Arial", 24, FontStyle.Regular);
             richTextBox1.Text = "This is a test text that should be cut off if it is too long. " +
                 "This is a test text that should be cut off if it is too long. " +

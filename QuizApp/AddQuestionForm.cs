@@ -18,7 +18,7 @@ namespace QuizApp
     {
 
         private static int _numberOfAnswers = 0;
-        DatabaseOperator dbOperator = new DatabaseOperator();
+        AddQuestionDatabaseOperator dbOperator = new AddQuestionDatabaseOperator();
 
         private static Dictionary<string, System.Windows.Forms.TextBox> _AnswerBoxes =
             new Dictionary<string, System.Windows.Forms.TextBox>();
@@ -38,6 +38,27 @@ namespace QuizApp
             InitializeComponent();
 
             SetComponents();
+
+            setDefaultValues();
+        }
+
+        private void setDefaultValues()
+        {
+            textBox_MainQuestionText.Text = "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá. " +
+                "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá. " +
+                "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá. " +
+                "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá. " +
+                "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá. " +
+                "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá.";
+            textBox1.Text = "Venus,Mars";
+            textBox_LinkAddress.Text = "https://www.google.com/";
+            textBox_PictureDescription.Text = "This is a test description for the image.";
+            textBox_FilePath.Text = "C:\\Users\\Janba\\Pictures\\a5j3K1Jb_700w_0.jpg";
+            textBox_Title.Text = "Test Title";
+            for(int i = 1; i <= 4; i++)
+            {
+                _AnswerBoxes["AnswerTextBox" + i.ToString()].Text = "Test answer " + i.ToString() + ".";
+            }
         }
 
         private void SetComponents()
@@ -92,7 +113,7 @@ namespace QuizApp
         private List<string>? TestQuestionFilled()
         {
             List<string>? Errors = new List<string>();
-            if (textBox2.Text == string.Empty)
+            if (textBox_MainQuestionText.Text == string.Empty)
             {
                 Errors.Add("Question is empty.");
             }
@@ -182,7 +203,7 @@ namespace QuizApp
 
         private void buttonTest_Click(object sender, EventArgs e)
         {
-
+            comboBox1.SelectedIndex = 0;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -199,7 +220,6 @@ namespace QuizApp
             // pro zruseni obrazku
             textBox_FilePath.Clear();
         }
-
 
 
         private void AddAnswerButton_Click(object sender, EventArgs e)
@@ -228,6 +248,29 @@ namespace QuizApp
             }
         }
 
+        private int? getDifficultyfromComboBox()
+        {
+            if (comboBox1.SelectedItem != null)
+            {
+                string? key = comboBox1.SelectedItem.ToString();
+                if (!string.IsNullOrEmpty(key) && _DifficultChoices.TryGetValue(key, out int value))
+                {
+                    Debug.WriteLine(value);
+                    return value;
+                }
+                else
+                {
+                    Debug.WriteLine($"Key '{key}' not found in _DifficultChoices.");
+                    return null; // or handle the case when the key is not found
+                }
+            }
+            else
+            {
+                Debug.WriteLine("No difficulty selected.");
+                return null; // or handle the case when no item is selected
+            }
+        }
+
         private void button_CompeteQuestionClick(object sender, EventArgs e)
         {
             Question question = new Question();
@@ -247,9 +290,38 @@ namespace QuizApp
                     string destination = AppDomain.CurrentDomain.BaseDirectory;
                     destination = destination + "Resources\\Images\\" + textBox_FilePath.Text.Split('\\').Last();
                     SaveFile(source, destination);
-                    question.
+                    question.QuestionPictureName = textBox_FilePath.Text.Split('\\').Last();
+                    question.QuestionPictureDescription = textBox_PictureDescription.Text;
                 }
             }
+            question.QuestionText = textBox_MainQuestionText.Text;
+            if(!textBox_Title.Text.IsNullOrEmpty())
+            {
+                question.QuestionTitle = textBox_Title.Text;
+            }
+            question.QuestionLink = textBox_LinkAddress.Text;
+            question.QuestionCathegories = textBox1.Text.Split(',').ToList();
+            for (int i = 0; i < question.QuestionCathegories.Count; i++)
+            {
+                question.QuestionCathegories[i] = question.QuestionCathegories[i].ToLower();
+            }
+
+            string res = comboBox1.SelectedItem?.ToString() ?? 
+                throw new NullReferenceException("difficulty choice does not have a correct value");
+            question.QuestionDifficulty = (_DifficultChoices[res]);
+
+            question.Answers = new List<string>();
+            for (int i = 1; i <= _numberOfAnswers; i++)
+            {
+                question.Answers.Add(_AnswerBoxes["AnswerTextBox" + i.ToString()].Text);
+                if (_AnswerCheckBoxes["AnswerCheckBox" + i.ToString()].Checked == true)
+                {
+                    question.CorrentAnswer = i - 1;
+                }
+            }
+            
+            dbOperator.CreateNewQuestion(question);
+            Debug.WriteLine("Question created successfully.");
         }
     }
 }
