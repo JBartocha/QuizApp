@@ -94,7 +94,7 @@ namespace QuizApp
             }
         }
 
-        public void AnswerSelection(int questionID, string[] answers, string pickedAnswer)
+        public void AnswerSelection(int questionID, string[] answers, string? pickedAnswer)
         {
 
             // 1. ZJISTENI ZDA JE ODPOVED SPRAVNA
@@ -106,20 +106,23 @@ namespace QuizApp
                 "JOIN Answers ON Questions.QuestionID = Answers.AnswerGroupID " +
                 "WHERE Answers.Answer = @PickedAnswer";
 
-            using (var command = new SqlCommand(query, connection))
+            if (!string.IsNullOrEmpty(pickedAnswer))
             {
-                command.Parameters.AddWithValue("@PickedAnswer", pickedAnswer);
-
-                using (var reader = command.ExecuteReader())
+                using (var command = new SqlCommand(query, connection))
                 {
-                    while (reader.Read())
+                    command.Parameters.AddWithValue("@PickedAnswer", pickedAnswer);
+
+                    using (var reader = command.ExecuteReader())
                     {
-                        isCorrect = reader.GetBoolean(reader.GetOrdinal("Correct"));
+                        while (reader.Read())
+                        {
+                            isCorrect = reader.GetBoolean(reader.GetOrdinal("Correct"));
+                        }
+                        //Debug.WriteLine($"Answer selected: {pickedAnswer}, Correct: {isCorrect}");
                     }
-                    //Debug.WriteLine($"Answer selected: {pickedAnswer}, Correct: {isCorrect}");
                 }
             }
-            
+
             // 2. ZAPISANI STATISTIK v tabulce Questions
             string updateQuery;
             if (isCorrect)
@@ -144,23 +147,25 @@ namespace QuizApp
             int[] answersID = new int[answers.Length];
 
             // 3.1.1 Zjistit ID pro pickedAnswer (vybranou odpoved)
-            string getPickedAnswerIDQuery = "SELECT Answers.AnswersID FROM Questions " +
+            if (!string.IsNullOrEmpty(pickedAnswer))
+            {
+                string getPickedAnswerIDQuery = "SELECT Answers.AnswersID FROM Questions " +
                 "JOIN Answers ON Questions.QuestionID = Answers.AnswerGroupID " +
                 "WHERE QuestionID = @questionID AND Answers.Answer = @PickedAnswer";
-            using (var command = new SqlCommand(getPickedAnswerIDQuery, connection)) 
-            { 
-                command.Parameters.AddWithValue("@questionID", questionID);
-                command.Parameters.AddWithValue("@PickedAnswer", pickedAnswer);
-
-                using (var reader = command.ExecuteReader())
+                using (var command = new SqlCommand(getPickedAnswerIDQuery, connection))
                 {
-                    while (reader.Read())
+                    command.Parameters.AddWithValue("@questionID", questionID);
+                    command.Parameters.AddWithValue("@PickedAnswer", pickedAnswer);
+
+                    using (var reader = command.ExecuteReader())
                     {
-                        pickedAnswerID = reader.GetInt32(reader.GetOrdinal("AnswersID"));
+                        while (reader.Read())
+                        {
+                            pickedAnswerID = reader.GetInt32(reader.GetOrdinal("AnswersID"));
+                        }
                     }
                 }
             }
-
             // 3.1.2 Zjistit ID pro ostatni odpovedi
             string getAnswersIDQuery = "SELECT Answers.AnswersID FROM Questions " +
                 "JOIN Answers ON Questions.QuestionID = Answers.AnswerGroupID " +
@@ -183,7 +188,7 @@ namespace QuizApp
                     }
                 }
             }
-            
+
             // 4. ZAPISANI STATISTIK v tabulce Answers 
             // 4.1 ZAPSANI STATISTIK zobrazenych odpovedi
             foreach (var ans in answersID)
@@ -200,16 +205,18 @@ namespace QuizApp
                 }
             }
             // 4.2 ZAPSANI STATISTIKY vybrane odpovedi
-            string updatePickedQuery = "UPDATE Answers SET TimesPicked = TimesPicked + 1 WHERE AnswersID = @pickedAnswerID";
-            using (var updatePickedCmd = new SqlCommand(updatePickedQuery, connection))
+            if (!string.IsNullOrEmpty(pickedAnswer))
             {
-                updatePickedCmd.Parameters.AddWithValue("@pickedAnswerID", pickedAnswerID);
-                updatePickedCmd.ExecuteNonQuery();
-            }
-            
-            Debug.WriteLine("Answers IDs: " + string.Join(", ", answersID));
-        }
+                string updatePickedQuery = "UPDATE Answers SET TimesPicked = TimesPicked + 1 WHERE AnswersID = @pickedAnswerID";
+                using (var updatePickedCmd = new SqlCommand(updatePickedQuery, connection))
+                {
+                    updatePickedCmd.Parameters.AddWithValue("@pickedAnswerID", pickedAnswerID);
+                    updatePickedCmd.ExecuteNonQuery();
+                }
 
+                Debug.WriteLine("Answers IDs: " + string.Join(", ", answersID));
+            }
+        }
 
         public List<int> GetSelecetedQuestionsID(List<string> cathegories, int difficultyLevel)
         {
