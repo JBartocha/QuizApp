@@ -19,26 +19,36 @@ namespace QuizApp
         Bitmap _surface;
         PeriodicTimer _Timer;
         readonly int _QuestionTime = 60;
+        float _RemainingTime = 60;
         bool _answerSelected = false;
         
         Question _question = new Question();
+        GameDatabaseOperator _GDO = new GameDatabaseOperator();
 
         public MainGameForm()
         {
             InitializeComponent();
+
+            List<string> cathegories = new List<string> { "Mars", "venus", "i dont exists" };
+            List<int> questionIds = new List<int>();
+            questionIds = _GDO.GetSelecetedQuestionsID(cathegories, 3);
+
+            /*
+            // Assume you have your list of ints
+            List<int> allIds = new List<int>();
+
+            // Shuffle and take 10 random elements
+            Random rng = new Random();
+            List<int> randomTen = allIds.OrderBy(x => rng.Next()).Take(10).ToList();
+            */
+
+            Question q = _GDO.GetQuestion(3);
 
             #pragma warning disable CS8602 // Dereference of a possibly null reference.
             panel1.GetType().GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance
                 | System.Reflection.BindingFlags.NonPublic).SetValue(panel1, true, null);
             #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-            richTextBox1.Font = new Font("Arial", 24, FontStyle.Regular);
-            richTextBox1.Text = "This is a test text that should be cut off if it is too long. " +
-                "This is a test text that should be cut off if it is too long. " +
-                "This is a test text that should be cut off if it is too long. " +
-                "This is a test text that should be cut off if it is too long. " +
-                "This is a test text that should be cut off if it is too long. " +
-                "This is a test text that should be cut off if it is too long. ";
             _surface = new Bitmap(panel1.Width, panel1.Height);
             _grap = Graphics.FromImage(_surface);
             panel1.BackgroundImage = _surface;
@@ -58,7 +68,7 @@ namespace QuizApp
             button_next.Hide();
 
             Task<bool> task = TurnPeriodicTimer();
-            
+
         }
 
         public async Task<bool> TurnPeriodicTimer()
@@ -75,6 +85,18 @@ namespace QuizApp
                     0, 0, panel1.Width - 3, panel1.Height - 3, 270, time*6);
                 panel1.Invalidate();
                 time += 0.2f;
+
+                _RemainingTime -= 0.2f;
+                label_Time.Text = Math.Round(_RemainingTime).ToString();
+                if(_RemainingTime <= 0)
+                {
+                    _Timer.Dispose();
+                    panel1.Invalidate();
+                    label_Time.Text = "00";
+                    //TODO : Dodelat
+                    button_next.Show();
+                    return false;
+                }
             }
             return true;
         }

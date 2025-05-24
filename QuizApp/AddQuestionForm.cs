@@ -322,6 +322,21 @@ namespace QuizApp
             
             dbOperator.CreateNewQuestion(question);
             Debug.WriteLine("Question created successfully.");
+            ClearComponents();
+        }
+
+        private void ClearComponents()
+        {
+            textBox_MainQuestionText.Text = "";
+            textBox1.Text = "";
+            textBox_LinkAddress.Text = "";
+            textBox_PictureDescription.Text = "";
+            textBox_FilePath.Text = "";
+            textBox_Title.Text = "";
+            for (int i = 1; i <= _AnswerBoxes.Count; i++)
+            {
+                _AnswerBoxes["AnswerTextBox" + i.ToString()].Text = "";
+            }
         }
     }
 }

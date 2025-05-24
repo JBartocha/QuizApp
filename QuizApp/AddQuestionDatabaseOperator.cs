@@ -94,7 +94,7 @@ public class AddQuestionDatabaseOperator
 
     internal void CreateNewQuestion(Question question)
     {
-        int LastPicturesID = -1;
+        int? LastPicturesID = null;
         int QuestionID = -1;
 
         // 1.PICTURE INSERTION
@@ -139,6 +139,10 @@ public class AddQuestionDatabaseOperator
         {
             Add_CathegoryGroupTable_Insert(QuestionID, CathegoryID[i]);
         }
+
+        // 6.ANSWERSSTATISTICS INSERTION
+        
+        // 7.QUESTIONSSTATISTICS INSERTION
     }
 
     private void Add_CathegoryGroupTable_Insert(int QuestionID, int CathegoryID)
@@ -188,14 +192,16 @@ public class AddQuestionDatabaseOperator
             using var connection = new SqlConnection(_connectionString);
             connection.Open();
 
-            string query = "INSERT INTO Answers (AnswerGroupID, Answer, Correct) " +
-                "VALUES (@AnswerGroupID, @Answer, @Correct);" +
+            string query = "INSERT INTO Answers (AnswerGroupID, Answer, Correct, TimesShown, TimesPicked) " +
+                "VALUES (@AnswerGroupID, @Answer, @Correct, @TimesShown, @TimesPicked);" +
                     "SELECT SCOPE_IDENTITY();";
             using var command = new SqlCommand(query, connection);
 
             command.Parameters.AddWithValue("@AnswerGroupID", AnswerGroupID);
             command.Parameters.AddWithValue("@Answer", Answer);
             command.Parameters.AddWithValue("@Correct", Correct);
+            command.Parameters.AddWithValue("@TimesShown", 0);
+            command.Parameters.AddWithValue("@TimesPicked", 0);
 
             object result = command.ExecuteScalar();
             int IDAnswer = Convert.ToInt32(result);
@@ -212,8 +218,10 @@ public class AddQuestionDatabaseOperator
         using var connection = new SqlConnection(_connectionString);
         connection.Open();
 
-        string query = "INSERT INTO Questions (Title, Question, Difficulty, PictureID, Link) " +
-            "VALUES (@Title, @Question, @Difficulty, @PictureID,@Link);" +
+        string query = "INSERT INTO Questions (Title, Question, Difficulty, " +
+            "PictureID, Link, TimesAnswered, TimesAnsweredCorrectly) " +
+            "VALUES (@Title, @Question, @Difficulty, @PictureID, @Link, " +
+            "@TimesAnswered, @TimesAnsweredCorrectly);" +
                 "SELECT SCOPE_IDENTITY();";
         using var command = new SqlCommand(query, connection);
 
@@ -222,6 +230,8 @@ public class AddQuestionDatabaseOperator
         command.Parameters.AddWithValue("@Difficulty", difficulty);
         command.Parameters.AddWithValue("@PictureID", pictureID ?? (object)DBNull.Value);
         command.Parameters.AddWithValue("@Link", link);
+        command.Parameters.AddWithValue("@TimesAnswered", 0);
+        command.Parameters.AddWithValue("@TimesAnsweredCorrectly", 0);
 
         object result = command.ExecuteScalar();
         int QuestionID = Convert.ToInt32(result);
