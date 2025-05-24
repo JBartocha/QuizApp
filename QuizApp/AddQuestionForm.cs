@@ -248,29 +248,6 @@ namespace QuizApp
             }
         }
 
-        private int? getDifficultyfromComboBox()
-        {
-            if (comboBox1.SelectedItem != null)
-            {
-                string? key = comboBox1.SelectedItem.ToString();
-                if (!string.IsNullOrEmpty(key) && _DifficultChoices.TryGetValue(key, out int value))
-                {
-                    Debug.WriteLine(value);
-                    return value;
-                }
-                else
-                {
-                    Debug.WriteLine($"Key '{key}' not found in _DifficultChoices.");
-                    return null; // or handle the case when the key is not found
-                }
-            }
-            else
-            {
-                Debug.WriteLine("No difficulty selected.");
-                return null; // or handle the case when no item is selected
-            }
-        }
-
         private void button_CompeteQuestionClick(object sender, EventArgs e)
         {
             Question question = new Question();

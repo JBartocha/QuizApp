@@ -94,6 +94,123 @@ namespace QuizApp
             }
         }
 
+        public void AnswerSelection(int questionID, string[] answers, string pickedAnswer)
+        {
+
+            // 1. ZJISTENI ZDA JE ODPOVED SPRAVNA
+            bool isCorrect = false;
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
+
+            string query = "SELECT Correct FROM Questions " +
+                "JOIN Answers ON Questions.QuestionID = Answers.AnswerGroupID " +
+                "WHERE Answers.Answer = @PickedAnswer";
+
+            using (var command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@PickedAnswer", pickedAnswer);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        isCorrect = reader.GetBoolean(reader.GetOrdinal("Correct"));
+                    }
+                    //Debug.WriteLine($"Answer selected: {pickedAnswer}, Correct: {isCorrect}");
+                }
+            }
+            
+            // 2. ZAPISANI STATISTIK v tabulce Questions
+            string updateQuery;
+            if (isCorrect)
+            {
+                updateQuery = "UPDATE Questions SET TimesAnswered = TimesAnswered + 1, " +
+                        "TimesAnsweredCorrectly = TimesAnsweredCorrectly + 1 " +
+                        "WHERE QuestionID = @questionID";
+            }
+            else
+            {
+                updateQuery = "UPDATE Questions SET TimesAnswered = TimesAnswered + 1 " +
+                        "WHERE QuestionID = @questionID";
+            }
+            using (var updateCommand = new SqlCommand(updateQuery, connection))
+            {
+                updateCommand.Parameters.AddWithValue("@questionID", questionID);
+                updateCommand.ExecuteNonQuery();
+            }
+
+            // 3.1 Zjistit unique ID pro vybranou odpověď a pro ostatní odpovědi
+            int? pickedAnswerID = null;
+            int[] answersID = new int[answers.Length];
+
+            // 3.1.1 Zjistit ID pro pickedAnswer (vybranou odpoved)
+            string getPickedAnswerIDQuery = "SELECT Answers.AnswersID FROM Questions " +
+                "JOIN Answers ON Questions.QuestionID = Answers.AnswerGroupID " +
+                "WHERE QuestionID = @questionID AND Answers.Answer = @PickedAnswer";
+            using (var command = new SqlCommand(getPickedAnswerIDQuery, connection)) 
+            { 
+                command.Parameters.AddWithValue("@questionID", questionID);
+                command.Parameters.AddWithValue("@PickedAnswer", pickedAnswer);
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        pickedAnswerID = reader.GetInt32(reader.GetOrdinal("AnswersID"));
+                    }
+                }
+            }
+
+            // 3.1.2 Zjistit ID pro ostatni odpovedi
+            string getAnswersIDQuery = "SELECT Answers.AnswersID FROM Questions " +
+                "JOIN Answers ON Questions.QuestionID = Answers.AnswerGroupID " +
+                "WHERE QuestionID = @questionID AND Answers.Answer " +
+                "IN (" + string.Join(", ", answers.Select((a, i) => $"@Answer{i}")) + ")";
+            using (var command = new SqlCommand(getAnswersIDQuery, connection))
+            {
+                command.Parameters.AddWithValue("@questionID", questionID);
+                for (int i = 0; i < answers.Length; i++)
+                {
+                    command.Parameters.AddWithValue($"@Answer{i}", answers[i]);
+                }
+                using (var reader = command.ExecuteReader())
+                {
+                    int index = 0;
+                    while (reader.Read())
+                    {
+                        answersID[index] = reader.GetInt32(reader.GetOrdinal("AnswersID"));
+                        index++;
+                    }
+                }
+            }
+            
+            // 4. ZAPISANI STATISTIK v tabulce Answers 
+            // 4.1 ZAPSANI STATISTIK zobrazenych odpovedi
+            foreach (var ans in answersID)
+            {
+                string updateShownQuery = "UPDATE Answers SET TimesShown = TimesShown + 1 WHERE AnswersID " +
+                    "IN (" + string.Join(", ", answersID.Select((a, i) => $"@answersID{i}")) + ")";
+                using (var updateShownCmd = new SqlCommand(updateShownQuery, connection))
+                {
+                    for (int i = 0; i < answersID.Length; i++)
+                    {
+                        updateShownCmd.Parameters.AddWithValue($"@answersID{i}", answersID[i]);
+                    }
+                    updateShownCmd.ExecuteNonQuery();
+                }
+            }
+            // 4.2 ZAPSANI STATISTIKY vybrane odpovedi
+            string updatePickedQuery = "UPDATE Answers SET TimesPicked = TimesPicked + 1 WHERE AnswersID = @pickedAnswerID";
+            using (var updatePickedCmd = new SqlCommand(updatePickedQuery, connection))
+            {
+                updatePickedCmd.Parameters.AddWithValue("@pickedAnswerID", pickedAnswerID);
+                updatePickedCmd.ExecuteNonQuery();
+            }
+            
+            Debug.WriteLine("Answers IDs: " + string.Join(", ", answersID));
+        }
+
+
         public List<int> GetSelecetedQuestionsID(List<string> cathegories, int difficultyLevel)
         {
             try
@@ -131,7 +248,6 @@ namespace QuizApp
                 MessageBox.Show($"An error occurred in method CheckIfCathegoryExists: {ex.Message}");
                 throw new Exception("Error checking cathegory existence", ex);
             }
-            throw new NotImplementedException("This method is not implemented yet.");
         }
 
         public List<string> GetAllCathegories()
@@ -164,7 +280,8 @@ namespace QuizApp
             {
                 using var connection = new SqlConnection(_connectionString);
                 connection.Open();
-                string query = "SELECT Description, Filepath FROM Pictures WHERE PictureID = @PictureID";
+                string query = "SELECT Description, Filepath FROM Pictures " +
+                    "WHERE PictureID = @PictureID";
                 using var command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@PictureID", pictureId);
                 using var reader = command.ExecuteReader();
@@ -217,6 +334,9 @@ namespace QuizApp
                 }
             }
 
+            // Randomly shuffle the answers
+            var rng = new Random();
+            answers = answers.OrderBy(x => rng.Next()).ToList();
             return answers;
         }
     }

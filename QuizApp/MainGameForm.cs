@@ -9,53 +9,53 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace QuizApp
 {
-    
+
     public partial class MainGameForm : Form
     {
         Graphics _grap;
         Bitmap _surface;
-        PeriodicTimer _Timer;
+        PeriodicTimer? _Timer;
+        GameDatabaseOperator _GDO = new GameDatabaseOperator();
         readonly int _QuestionTime = 60;
         float _RemainingTime = 60;
         bool _answerSelected = false;
-        
-        Question _question = new Question();
-        GameDatabaseOperator _GDO = new GameDatabaseOperator();
+        int _currentQuestionIndex = 0;
+
+        readonly int _QuestionTotal;
+        List<Question> _Questions = new List<Question>();
+
 
         public MainGameForm()
         {
             InitializeComponent();
 
-            List<string> cathegories = new List<string> { "Mars", "venus", "i dont exists" };
+            _QuestionTotal = 10;
+            List<string> cathegories = new List<string> { "venus", "mars", "i dont exists" };
             List<int> questionIds = new List<int>();
             questionIds = _GDO.GetSelecetedQuestionsID(cathegories, 3);
 
-            /*
-            // Assume you have your list of ints
-            List<int> allIds = new List<int>();
-
             // Shuffle and take 10 random elements
             Random rng = new Random();
-            List<int> randomTen = allIds.OrderBy(x => rng.Next()).Take(10).ToList();
-            */
+            List<int> randomTen = questionIds.OrderBy(x => rng.Next()).Take(_QuestionTotal).ToList();
 
-            Question q = _GDO.GetQuestion(3);
+            foreach (int questionId in randomTen)
+            {
+                _Questions.Add(_GDO.GetQuestion(questionId));
+            }
 
-            #pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             panel1.GetType().GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance
                 | System.Reflection.BindingFlags.NonPublic).SetValue(panel1, true, null);
-            #pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             _surface = new Bitmap(panel1.Width, panel1.Height);
             _grap = Graphics.FromImage(_surface);
             panel1.BackgroundImage = _surface;
             panel1.BackgroundImageLayout = ImageLayout.None;
-
-            Color c = panel1.BackColor;
-            Debug.WriteLine("R:" + c.R + " G:" + c.G + " B:" + c.B);
 
             Brush brush1 = new SolidBrush(Color.FromArgb(255, 0, 153, 255));
             Brush brush2 = new SolidBrush(Color.FromArgb(255, 240, 240, 240));
@@ -64,38 +64,68 @@ namespace QuizApp
             _grap.FillEllipse(brush2, 40, 40, panel1.Width - 80, panel1.Height - 80);
             panel1.Invalidate();
             PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000));
-            
+
             button_next.Hide();
 
-            Task<bool> task = TurnPeriodicTimer();
-
+            Task<bool> task = TimerForClock();
+            SetQuestion(_Questions[_currentQuestionIndex]);
         }
 
-        public async Task<bool> TurnPeriodicTimer()
+        private void SetQuestion(Question question)
+        {
+            label_Title.Text = question.QuestionTitle;
+            richTextBox1.Text = question.QuestionText;
+            label_Time.Text = _QuestionTime.ToString();
+            linkLabel1.Text = question.QuestionLink;
+            button_next.Hide();
+            linkLabel1.Hide();
+            linkLabel1.Links.Clear();
+            linkLabel1.Links.Add(0, linkLabel1.Text.Length);
+
+            _answerSelected = false;
+            for (int i = 0; i < 4; i++)
+            {
+                Button? button = this.Controls.Find("button" + i, true).FirstOrDefault() as Button;
+                if (button != null)
+                {
+                    button.Text = question.Answers[i];
+                    button.Show();
+                    button.Enabled = true;
+                }
+            }
+        }
+
+        public async Task<bool> TimerForClock()
         {
             float time = 0;
-            if(time > _QuestionTime)
+            if (time > _QuestionTime)
             {
                 return false;
             }
             _Timer = new PeriodicTimer(TimeSpan.FromMilliseconds(200));
             while (await _Timer.WaitForNextTickAsync())
             {
-                _grap.DrawPie(new Pen(Color.FromArgb(255,240,240,240), 5),
-                    0, 0, panel1.Width - 3, panel1.Height - 3, 270, time*6);
+                _grap.DrawPie(new Pen(Color.FromArgb(255, 240, 240, 240), 5),
+                    0, 0, panel1.Width - 3, panel1.Height - 3, 270, time * 6);
                 panel1.Invalidate();
                 time += 0.2f;
 
                 _RemainingTime -= 0.2f;
                 label_Time.Text = Math.Round(_RemainingTime).ToString();
-                if(_RemainingTime <= 0)
+                if (_RemainingTime <= 0)
                 {
                     _Timer.Dispose();
                     panel1.Invalidate();
                     label_Time.Text = "00";
-                    //TODO : Dodelat
-                    button_next.Show();
+                    ShowAfterSelection();
+                    Button? correctAnswerButton = this.Controls.Find("button" +
+                        _Questions[_currentQuestionIndex].CorrentAnswer, true).FirstOrDefault() as Button;
+                    if (correctAnswerButton != null)
+                    {
+                        correctAnswerButton.BackColor = Color.FromArgb(222, 0, 150, 0);
+                    }
                     return false;
+                    //TODO - handle statistics for question timeout
                 }
             }
             return true;
@@ -103,12 +133,98 @@ namespace QuizApp
 
         private void button1_MouseCaptureChanged(object sender, EventArgs e)
         {
+            if (_answerSelected)
+                return; // Prevent multiple selections
+
+            int selectedAnswer = -1;
             if (sender is Control control)
             {
-                Debug.WriteLine(control.Name);
+                string name = control.Name;
+                string result = Regex.Replace(name, @"[button]", "");
+                selectedAnswer = int.Parse(result);
             }
+
+            Button? button = this.Controls.Find("button" + selectedAnswer, true).FirstOrDefault() as Button;
+            if (button != null)
+            {
+                if (selectedAnswer == _Questions[_currentQuestionIndex].CorrentAnswer)
+                {
+                    button.BackColor = Color.FromArgb(222, 0, 150, 0); // Green for correct answer
+                }
+                else
+                {
+                    button.BackColor = Color.FromArgb(222, 150, 0, 0); // Red for incorrect answer
+                    Button? correctAnswerButton = this.Controls.Find("button" +
+                        _Questions[_currentQuestionIndex].CorrentAnswer, true).FirstOrDefault() as Button;
+                    if (correctAnswerButton != null)
+                        correctAnswerButton.BackColor = Color.FromArgb(255, 0, 153, 0); // Green for correct answer
+                }
+            }
+
+            // Sends data needed to save statistics for question and answer selection
+            _GDO.AnswerSelection(_Questions[_currentQuestionIndex].QuestionID,
+                _Questions[_currentQuestionIndex].Answers.ToArray(),
+                _Questions[_currentQuestionIndex].Answers[selectedAnswer]);
+
+            // Disable all buttons after selection
             _answerSelected = true;
+            if (_Timer != null)
+                _Timer.Dispose();
+
+
+            ShowAfterSelection();
+        }
+
+        private void ShowAfterSelection()
+        {
             button_next.Show();
+            linkLabel1.Show();
+        }
+
+        private void ResetClock()
+        {
+            Brush brush1 = new SolidBrush(Color.FromArgb(255, 0, 153, 255));
+            Brush brush2 = new SolidBrush(Color.FromArgb(255, 240, 240, 240));
+            _grap.FillEllipse(brush1, 0, 0, panel1.Width - 1, panel1.Height - 1);
+            _grap.FillEllipse(brush2, 40, 40, panel1.Width - 80, panel1.Height - 80);
+
+            panel1.Invalidate();
+            _RemainingTime = _QuestionTime;
+            label_Time.Text = _QuestionTime.ToString();
+        }
+
+
+        private void ResetComponents()
+        {
+            ResetClock();
+
+            button_next.Hide();
+            _answerSelected = false;
+        }
+
+        private void button_next_Click(object sender, EventArgs e)
+        {
+            ResetComponents();
+            _currentQuestionIndex++;
+            Task<bool> task = TimerForClock();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+
+            string url = linkLabel1.Text;
+            try
+            {
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to open link: " + ex.Message);
+            }
         }
     }
 }

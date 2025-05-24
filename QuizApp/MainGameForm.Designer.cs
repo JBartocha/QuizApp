@@ -29,11 +29,12 @@
         private void InitializeComponent()
         {
             panel2 = new Panel();
+            linkLabel1 = new LinkLabel();
             button_next = new Button();
-            button4 = new Button();
+            button1 = new Button();
             button3 = new Button();
             button2 = new Button();
-            button1 = new Button();
+            button0 = new Button();
             richTextBox1 = new RichTextBox();
             panel1 = new Panel();
             label_Time = new Label();
@@ -45,37 +46,53 @@
             // 
             // panel2
             // 
-            panel2.BackColor = SystemColors.ActiveBorder;
-            panel2.Controls.Add(button_next);
+            panel2.BackColor = SystemColors.Window;
+            panel2.Controls.Add(linkLabel1);
             panel2.Location = new Point(12, 614);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1326, 103);
+            panel2.Size = new Size(1108, 103);
             panel2.TabIndex = 1;
+            // 
+            // linkLabel1
+            // 
+            linkLabel1.AccessibleName = "";
+            linkLabel1.AutoSize = true;
+            linkLabel1.LinkArea = new LinkArea(0, 10);
+            linkLabel1.Location = new Point(3, 82);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(60, 15);
+            linkLabel1.TabIndex = 0;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "linkLabel1";
+            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
             // button_next
             // 
-            button_next.Location = new Point(1114, 3);
+            button_next.Location = new Point(1129, 614);
             button_next.Name = "button_next";
-            button_next.Size = new Size(209, 97);
+            button_next.Size = new Size(209, 103);
             button_next.TabIndex = 4;
-            button_next.Text = "5";
+            button_next.Text = "NEXT";
             button_next.UseVisualStyleBackColor = true;
+            button_next.Click += button_next_Click;
             // 
-            // button4
+            // button1
             // 
-            button4.Location = new Point(572, 505);
-            button4.Name = "button4";
-            button4.Size = new Size(548, 103);
-            button4.TabIndex = 3;
-            button4.Text = "4";
-            button4.UseVisualStyleBackColor = true;
-            button4.MouseCaptureChanged += button1_MouseCaptureChanged;
+            button1.Font = new Font("Segoe UI", 24F);
+            button1.Location = new Point(12, 504);
+            button1.Name = "button1";
+            button1.Size = new Size(551, 104);
+            button1.TabIndex = 3;
+            button1.Text = "1";
+            button1.UseVisualStyleBackColor = true;
+            button1.MouseCaptureChanged += button1_MouseCaptureChanged;
             // 
             // button3
             // 
-            button3.Location = new Point(572, 396);
+            button3.Font = new Font("Segoe UI", 24F);
+            button3.Location = new Point(569, 504);
             button3.Name = "button3";
-            button3.Size = new Size(548, 104);
+            button3.Size = new Size(551, 104);
             button3.TabIndex = 2;
             button3.Text = "3";
             button3.UseVisualStyleBackColor = true;
@@ -83,26 +100,29 @@
             // 
             // button2
             // 
-            button2.Location = new Point(12, 506);
+            button2.Font = new Font("Segoe UI", 24F);
+            button2.Location = new Point(569, 396);
             button2.Name = "button2";
-            button2.Size = new Size(548, 104);
+            button2.Size = new Size(551, 104);
             button2.TabIndex = 1;
             button2.Text = "2";
             button2.UseVisualStyleBackColor = true;
             button2.MouseCaptureChanged += button1_MouseCaptureChanged;
             // 
-            // button1
+            // button0
             // 
-            button1.Location = new Point(12, 396);
-            button1.Name = "button1";
-            button1.Size = new Size(548, 104);
-            button1.TabIndex = 0;
-            button1.Text = "1";
-            button1.UseVisualStyleBackColor = true;
-            button1.MouseCaptureChanged += button1_MouseCaptureChanged;
+            button0.Font = new Font("Segoe UI", 24F);
+            button0.Location = new Point(12, 396);
+            button0.Name = "button0";
+            button0.Size = new Size(551, 104);
+            button0.TabIndex = 0;
+            button0.Text = "0";
+            button0.UseVisualStyleBackColor = true;
+            button0.MouseCaptureChanged += button1_MouseCaptureChanged;
             // 
             // richTextBox1
             // 
+            richTextBox1.Font = new Font("Segoe UI", 18F);
             richTextBox1.Location = new Point(12, 44);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.Size = new Size(1326, 346);
@@ -153,18 +173,20 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1350, 729);
+            Controls.Add(button_next);
             Controls.Add(label_Difficulty);
-            Controls.Add(button4);
+            Controls.Add(button1);
             Controls.Add(label_Title);
             Controls.Add(button3);
             Controls.Add(panel1);
             Controls.Add(button2);
             Controls.Add(richTextBox1);
-            Controls.Add(button1);
+            Controls.Add(button0);
             Controls.Add(panel2);
             Name = "MainGameForm";
             Text = "MainGameForm";
             panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ResumeLayout(false);
@@ -174,14 +196,15 @@
         #endregion
         private Panel panel2;
         private Button button_next;
-        private Button button4;
+        private Button button1;
         private Button button3;
         private Button button2;
-        private Button button1;
+        private Button button0;
         private RichTextBox richTextBox1;
         private Panel panel1;
         private Label label_Title;
         private Label label_Difficulty;
         private Label label_Time;
+        private LinkLabel linkLabel1;
     }
 }

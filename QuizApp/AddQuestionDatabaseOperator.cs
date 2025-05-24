@@ -139,10 +139,6 @@ public class AddQuestionDatabaseOperator
         {
             Add_CathegoryGroupTable_Insert(QuestionID, CathegoryID[i]);
         }
-
-        // 6.ANSWERSSTATISTICS INSERTION
-        
-        // 7.QUESTIONSSTATISTICS INSERTION
     }
 
     private void Add_CathegoryGroupTable_Insert(int QuestionID, int CathegoryID)
