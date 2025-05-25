@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             panel2 = new Panel();
+            button_Picture = new Button();
             linkLabel1 = new LinkLabel();
             button_next = new Button();
             button1 = new Button();
@@ -40,6 +41,7 @@
             label_Time = new Label();
             label_Title = new Label();
             label_Difficulty = new Label();
+            label_answers = new Label();
             panel2.SuspendLayout();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -47,11 +49,22 @@
             // panel2
             // 
             panel2.BackColor = SystemColors.Window;
+            panel2.Controls.Add(button_Picture);
             panel2.Controls.Add(linkLabel1);
             panel2.Location = new Point(12, 614);
             panel2.Name = "panel2";
             panel2.Size = new Size(1108, 103);
             panel2.TabIndex = 1;
+            // 
+            // button_Picture
+            // 
+            button_Picture.Location = new Point(3, 3);
+            button_Picture.Name = "button_Picture";
+            button_Picture.Size = new Size(89, 76);
+            button_Picture.TabIndex = 1;
+            button_Picture.Text = "Picture";
+            button_Picture.UseVisualStyleBackColor = true;
+            button_Picture.Click += button_Picture_Click;
             // 
             // linkLabel1
             // 
@@ -168,11 +181,22 @@
             label_Difficulty.TabIndex = 6;
             label_Difficulty.Text = "Obtížnost: obtížnost";
             // 
+            // label_answers
+            // 
+            label_answers.AutoSize = true;
+            label_answers.Font = new Font("Segoe UI", 18F);
+            label_answers.Location = new Point(704, 9);
+            label_answers.Name = "label_answers";
+            label_answers.Size = new Size(213, 32);
+            label_answers.TabIndex = 7;
+            label_answers.Text = "Správné odpovědi:";
+            // 
             // MainGameForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1350, 729);
+            Controls.Add(label_answers);
             Controls.Add(button_next);
             Controls.Add(label_Difficulty);
             Controls.Add(button1);
@@ -206,5 +230,7 @@
         private Label label_Difficulty;
         private Label label_Time;
         private LinkLabel linkLabel1;
+        private Button button_Picture;
+        private Label label_answers;
     }
 }

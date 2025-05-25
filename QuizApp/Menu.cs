@@ -7,9 +7,35 @@ namespace QuizApp
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button_BeginQuiz_Click(object sender, EventArgs e)
         {
+            this.Hide();
+            using (Form GameSelectionForm = new GameSelectionForm())
+            {
+                GameSelectionForm.ShowDialog();
+            }
+            this.Show();    
+        }
 
+        private void button_Exit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void button_AddQuestion_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            using (Form questForm = new AddQuestionForm())
+            {
+                questForm.ShowDialog();
+            }
+            this.Show();
+        }
+
+        private void buttonStatistics_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            // TODO : Implement statistics form
         }
     }
 }

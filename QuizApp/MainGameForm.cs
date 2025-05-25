@@ -24,11 +24,15 @@ namespace QuizApp
         float _RemainingTime = 60;
         bool _answerSelected = false;
         int _currentQuestionIndex = 0;
+        int _CorrectAnswers = 0;
 
         readonly int _QuestionTotal;
         List<Question> _Questions = new List<Question>();
-
-
+        private List<int> cathegoryIDs;
+        private int difficulty;
+        private int numberOfQuestions;
+        
+        /*
         public MainGameForm()
         {
             InitializeComponent();
@@ -36,9 +40,9 @@ namespace QuizApp
             _QuestionTotal = 10;
             List<string> cathegories = new List<string> { "venus", "mars", "i dont exists" };
             List<int> questionIds = new List<int>();
+            //TODO - upravit podle počtu otázek, které si uživatel vybere.
             questionIds = _GDO.GetSelecetedQuestionsID(cathegories, 3);
-
-            // Shuffle and take 10 random elements
+            // Shuffle and take random elements
             Random rng = new Random();
             List<int> randomTen = questionIds.OrderBy(x => rng.Next()).Take(_QuestionTotal).ToList();
 
@@ -46,53 +50,97 @@ namespace QuizApp
             {
                 _Questions.Add(_GDO.GetQuestion(questionId));
             }
+              // If there are not enough questions, fill with empty questions
+            _QuestionTotal = _Questions.Count;
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            #pragma warning disable CS8602 // Dereference of a possibly null reference.
             panel1.GetType().GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance
                 | System.Reflection.BindingFlags.NonPublic).SetValue(panel1, true, null);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+            #pragma warning restore CS8602 // Dereference of a possibly null reference.
+
+            _surface = new Bitmap(panel1.Width, panel1.Height);
+            _grap = Graphics.FromImage(_surface);
+            panel1.BackgroundImage = _surface;
+            panel1.BackgroundImageLayout = ImageLayout.None;
+            label_answers.Text = "Spravné odpovědi: " + _CorrectAnswers.ToString() + "/" +
+                _QuestionTotal.ToString() + "(" + _currentQuestionIndex + 1 + ")";
+
+            ResetClock();
+
+            PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000));
+
+            button_next.Hide();
+
+            Task<bool> task = TimerForClock();
+
+            ResetComponents();
+            SetQuestion();
+        }
+        */
+        public MainGameForm(List<int> cathegoryIDs, int difficulty, int numberOfQuestions)
+        {
+            InitializeComponent();
+
+            _QuestionTotal = numberOfQuestions;
+            List<int> _cathegoryIDs = cathegoryIDs; 
+            this.difficulty = difficulty;
+
+            List<int> questionIds = new List<int>();
+            questionIds = _GDO.GetSelecetedQuestionsID(cathegoryIDs, difficulty);
+
+            // Shuffle and take random elements
+            Random rng = new Random();
+            List<int> randomQuestionsID = questionIds.OrderBy(x => rng.Next()).Take(_QuestionTotal).ToList();
+
+            foreach (int questionId in randomQuestionsID)
+            {
+                _Questions.Add(_GDO.GetQuestion(questionId));
+            }
+            // If there are not enough questions, fill with empty questions
+            _QuestionTotal = _Questions.Count;
+
+
+            // Buffering clocks to remove flickering
+            #pragma warning disable CS8602 // Dereference of a possibly null reference.
+            panel1.GetType().GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance
+                | System.Reflection.BindingFlags.NonPublic).SetValue(panel1, true, null);
+            #pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             _surface = new Bitmap(panel1.Width, panel1.Height);
             _grap = Graphics.FromImage(_surface);
             panel1.BackgroundImage = _surface;
             panel1.BackgroundImageLayout = ImageLayout.None;
 
-            Brush brush1 = new SolidBrush(Color.FromArgb(255, 0, 153, 255));
-            Brush brush2 = new SolidBrush(Color.FromArgb(255, 240, 240, 240));
+            label_answers.Text = "Spravné odpovědi: " + _CorrectAnswers.ToString() + "/" +
+                _QuestionTotal.ToString() + "(" + _currentQuestionIndex + ")";
 
-            _grap.FillEllipse(brush1, 0, 0, panel1.Width - 1, panel1.Height - 1);
-            _grap.FillEllipse(brush2, 40, 40, panel1.Width - 80, panel1.Height - 80);
-            panel1.Invalidate();
             PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000));
 
-            button_next.Hide();
-
             Task<bool> task = TimerForClock();
-            SetQuestion(_Questions[_currentQuestionIndex]);
+
+            ResetComponents();
+            SetQuestion();
         }
 
-        private void SetQuestion(Question question)
+        private void SetQuestion()
         {
-            label_Title.Text = question.QuestionTitle;
-            richTextBox1.Text = question.QuestionText;
+            label_Title.Text = _Questions[_currentQuestionIndex].QuestionTitle;
+            richTextBox1.Text = _Questions[_currentQuestionIndex].QuestionText;
             label_Time.Text = _QuestionTime.ToString();
-            linkLabel1.Text = question.QuestionLink;
-            button_next.Hide();
-            linkLabel1.Hide();
-            linkLabel1.Links.Clear();
-            linkLabel1.Links.Add(0, linkLabel1.Text.Length);
-
-            _answerSelected = false;
+            linkLabel1.Text = _Questions[_currentQuestionIndex].QuestionLink;
+            
             for (int i = 0; i < 4; i++)
             {
                 Button? button = this.Controls.Find("button" + i, true).FirstOrDefault() as Button;
                 if (button != null)
                 {
-                    button.Text = question.Answers[i];
+                    button.Text = _Questions[_currentQuestionIndex].Answers[i];
                     button.Show();
                     button.Enabled = true;
+                    button.BackColor = Color.FromArgb(255, 240, 240, 240); // Reset color to default
                 }
             }
+
         }
 
         public async Task<bool> TimerForClock()
@@ -131,7 +179,7 @@ namespace QuizApp
             return true;
         }
 
-        private void button1_MouseCaptureChanged(object sender, EventArgs e)
+        private void button1_MouseCaptureChanged(object sender, EventArgs e) // TODO - change to MouseClick
         {
             if (_answerSelected)
                 return; // Prevent multiple selections
@@ -150,6 +198,9 @@ namespace QuizApp
                 if (selectedAnswer == _Questions[_currentQuestionIndex].CorrentAnswer)
                 {
                     button.BackColor = Color.FromArgb(222, 0, 150, 0); // Green for correct answer
+                    _CorrectAnswers++; // Increment correct answers count   
+                    label_answers.Text = "Spravné odpovědi: " + _CorrectAnswers.ToString() + "/" + 
+                        _QuestionTotal.ToString() + "(" + _currentQuestionIndex + ")";
                 }
                 else
                 {
@@ -157,7 +208,9 @@ namespace QuizApp
                     Button? correctAnswerButton = this.Controls.Find("button" +
                         _Questions[_currentQuestionIndex].CorrentAnswer, true).FirstOrDefault() as Button;
                     if (correctAnswerButton != null)
+                    {
                         correctAnswerButton.BackColor = Color.FromArgb(255, 0, 153, 0); // Green for correct answer
+                    }
                 }
             }
 
@@ -171,13 +224,24 @@ namespace QuizApp
             if (_Timer != null)
                 _Timer.Dispose();
 
-
             ShowAfterSelection();
+
+            if (++_currentQuestionIndex == _QuestionTotal)
+            {
+                MessageBox.Show("Konec hry! Správné odpovědi: " + _CorrectAnswers + "/" + _QuestionTotal);
+                this.Close(); // Or navigate to a results form
+                return;
+            }
         }
 
         private void ShowAfterSelection()
         {
             button_next.Show();
+            if(_Questions[_currentQuestionIndex].QuestionPictureName != null 
+                && _Questions[_currentQuestionIndex].QuestionPictureName != "")
+            {
+                button_Picture.Show();
+            }
             linkLabel1.Show();
         }
 
@@ -193,19 +257,22 @@ namespace QuizApp
             label_Time.Text = _QuestionTime.ToString();
         }
 
-
         private void ResetComponents()
         {
             ResetClock();
 
+            button_Picture.Hide();
             button_next.Hide();
+            linkLabel1.Hide();
+            linkLabel1.Links.Clear();
+            linkLabel1.Links.Add(0, linkLabel1.Text.Length);
             _answerSelected = false;
         }
 
         private void button_next_Click(object sender, EventArgs e)
         {
             ResetComponents();
-            _currentQuestionIndex++;
+            SetQuestion();
             Task<bool> task = TimerForClock();
         }
 
@@ -225,6 +292,11 @@ namespace QuizApp
             {
                 MessageBox.Show("Unable to open link: " + ex.Message);
             }
+        }
+
+        private void button_Picture_Click(object sender, EventArgs e)
+        {
+            Form pictureForm = new SimplePictureForm(_Questions[_currentQuestionIndex].QuestionPictureName);
         }
     }
 }

@@ -28,25 +28,65 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
+            button_Start = new Button();
+            buttonStatistics = new Button();
+            button_AddQuestion = new Button();
+            button_Exit = new Button();
             SuspendLayout();
             // 
-            // button1
+            // button_Start
             // 
-            button1.Location = new Point(329, 64);
-            button1.Name = "button1";
-            button1.Size = new Size(150, 40);
-            button1.TabIndex = 0;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            button_Start.Font = new Font("Segoe UI", 18F);
+            button_Start.Location = new Point(279, 39);
+            button_Start.Name = "button_Start";
+            button_Start.Size = new Size(198, 40);
+            button_Start.TabIndex = 0;
+            button_Start.Text = "Začni Kvíz";
+            button_Start.UseVisualStyleBackColor = true;
+            button_Start.Click += button_BeginQuiz_Click;
+            // 
+            // buttonStatistics
+            // 
+            buttonStatistics.Font = new Font("Segoe UI", 18F);
+            buttonStatistics.Location = new Point(279, 131);
+            buttonStatistics.Name = "buttonStatistics";
+            buttonStatistics.Size = new Size(198, 40);
+            buttonStatistics.TabIndex = 1;
+            buttonStatistics.Text = "Statistiky";
+            buttonStatistics.UseVisualStyleBackColor = true;
+            buttonStatistics.Click += buttonStatistics_Click;
+            // 
+            // button_AddQuestion
+            // 
+            button_AddQuestion.Font = new Font("Segoe UI", 18F);
+            button_AddQuestion.Location = new Point(279, 85);
+            button_AddQuestion.Name = "button_AddQuestion";
+            button_AddQuestion.Size = new Size(198, 40);
+            button_AddQuestion.TabIndex = 2;
+            button_AddQuestion.Text = "Přidej Otázku";
+            button_AddQuestion.UseVisualStyleBackColor = true;
+            button_AddQuestion.Click += button_AddQuestion_Click;
+            // 
+            // button_Exit
+            // 
+            button_Exit.Font = new Font("Segoe UI", 18F);
+            button_Exit.Location = new Point(279, 370);
+            button_Exit.Name = "button_Exit";
+            button_Exit.Size = new Size(198, 40);
+            button_Exit.TabIndex = 3;
+            button_Exit.Text = "Exit";
+            button_Exit.UseVisualStyleBackColor = true;
+            button_Exit.Click += button_Exit_Click;
             // 
             // Menu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(button1);
+            Controls.Add(button_Exit);
+            Controls.Add(button_AddQuestion);
+            Controls.Add(buttonStatistics);
+            Controls.Add(button_Start);
             Name = "Menu";
             Text = "Menu";
             ResumeLayout(false);
@@ -54,6 +94,9 @@
 
         #endregion
 
-        private Button button1;
+        private Button button_Start;
+        private Button buttonStatistics;
+        private Button button_AddQuestion;
+        private Button button_Exit;
     }
 }

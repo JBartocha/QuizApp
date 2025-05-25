@@ -55,7 +55,7 @@ namespace QuizApp
             textBox_PictureDescription.Text = "This is a test description for the image.";
             textBox_FilePath.Text = "C:\\Users\\Janba\\Pictures\\a5j3K1Jb_700w_0.jpg";
             textBox_Title.Text = "Test Title";
-            for(int i = 1; i <= 4; i++)
+            for (int i = 1; i <= 4; i++)
             {
                 _AnswerBoxes["AnswerTextBox" + i.ToString()].Text = "Test answer " + i.ToString() + ".";
             }
@@ -140,7 +140,7 @@ namespace QuizApp
                     Errors.Add("Answer " + i.ToString() + " is empty.");
                 }
             }
-            if(textBox_FilePath.Text.IsNullOrEmpty() != textBox_PictureDescription.Text.IsNullOrEmpty())
+            if (textBox_FilePath.Text.IsNullOrEmpty() != textBox_PictureDescription.Text.IsNullOrEmpty())
             {
                 Errors.Add("If you add image or description to image - both have to be filled");
             }
@@ -272,7 +272,7 @@ namespace QuizApp
                 }
             }
             question.QuestionText = textBox_MainQuestionText.Text;
-            if(!textBox_Title.Text.IsNullOrEmpty())
+            if (!textBox_Title.Text.IsNullOrEmpty())
             {
                 question.QuestionTitle = textBox_Title.Text;
             }
@@ -283,7 +283,7 @@ namespace QuizApp
                 question.QuestionCathegories[i] = question.QuestionCathegories[i].ToLower();
             }
 
-            string res = comboBox1.SelectedItem?.ToString() ?? 
+            string res = comboBox1.SelectedItem?.ToString() ??
                 throw new NullReferenceException("difficulty choice does not have a correct value");
             question.QuestionDifficulty = (_DifficultChoices[res]);
 
@@ -296,7 +296,7 @@ namespace QuizApp
                     question.CorrentAnswer = i - 1;
                 }
             }
-            
+
             dbOperator.CreateNewQuestion(question);
             Debug.WriteLine("Question created successfully.");
             ClearComponents();
@@ -314,6 +314,11 @@ namespace QuizApp
             {
                 _AnswerBoxes["AnswerTextBox" + i.ToString()].Text = "";
             }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            this.Close(); // Close the form without saving
         }
     }
 }

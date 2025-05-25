@@ -9,22 +9,7 @@ public class AddQuestionDatabaseOperator
 
     public AddQuestionDatabaseOperator()
     {
-        string DBfilename = Environment.CurrentDirectory;
-        for (int i = 0; i < 3; i++)
-        {
-            DBfilename = Directory.GetParent(DBfilename)?.ToString() ??
-                throw new InvalidOperationException("Parent directory is null.");
-        }
-        DBfilename += "\\MainDatabase.mdf";
-
-        var builder = new SqlConnectionStringBuilder
-        {
-            DataSource = @"(LocalDB)\MSSQLLocalDB",
-            AttachDBFilename = @DBfilename,
-            IntegratedSecurity = true
-        };
-        _connectionString = builder.ConnectionString;
-        Debug.WriteLine(_connectionString);
+        _connectionString = ConnectionString.Get();
     }
 
     private int? CheckIfCathegoryExists(string CathegoryName)
@@ -215,9 +200,9 @@ public class AddQuestionDatabaseOperator
         connection.Open();
 
         string query = "INSERT INTO Questions (Title, Question, Difficulty, " +
-            "PictureID, Link, TimesAnswered, TimesAnsweredCorrectly) " +
+            "PictureID, Link, TimesShown, TimesAnsweredCorrectly) " +
             "VALUES (@Title, @Question, @Difficulty, @PictureID, @Link, " +
-            "@TimesAnswered, @TimesAnsweredCorrectly);" +
+            "@TimesShown, @TimesAnsweredCorrectly);" +
                 "SELECT SCOPE_IDENTITY();";
         using var command = new SqlCommand(query, connection);
 
@@ -226,7 +211,7 @@ public class AddQuestionDatabaseOperator
         command.Parameters.AddWithValue("@Difficulty", difficulty);
         command.Parameters.AddWithValue("@PictureID", pictureID ?? (object)DBNull.Value);
         command.Parameters.AddWithValue("@Link", link);
-        command.Parameters.AddWithValue("@TimesAnswered", 0);
+        command.Parameters.AddWithValue("@TimesShown", 0);
         command.Parameters.AddWithValue("@TimesAnsweredCorrectly", 0);
 
         object result = command.ExecuteScalar();

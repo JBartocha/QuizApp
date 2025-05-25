@@ -14,9 +14,7 @@ namespace QuizApp
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             InicializeDirectories();
-            //Application.Run(new Menu());
-            Application.Run(new MainGameForm());
-            //Application.Run(new AddQuestionForm());
+            Application.Run(new Menu());
         }
 
         private static void InicializeDirectories()

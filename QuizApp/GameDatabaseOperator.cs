@@ -15,21 +15,7 @@ namespace QuizApp
 
         public GameDatabaseOperator()
         {
-            string DBfilename = Environment.CurrentDirectory;
-            for (int i = 0; i < 3; i++)
-            {
-                DBfilename = Directory.GetParent(DBfilename)?.ToString() ??
-                    throw new InvalidOperationException("Parent directory is null.");
-            }
-            DBfilename += "\\MainDatabase.mdf";
-
-            var builder = new SqlConnectionStringBuilder
-            {
-                DataSource = @"(LocalDB)\MSSQLLocalDB",
-                AttachDBFilename = @DBfilename,
-                IntegratedSecurity = true
-            };
-            _connectionString = builder.ConnectionString;
+            _connectionString = ConnectionString.Get();
         }
 
         public Question GetQuestion(int questionId)
@@ -127,13 +113,13 @@ namespace QuizApp
             string updateQuery;
             if (isCorrect)
             {
-                updateQuery = "UPDATE Questions SET TimesAnswered = TimesAnswered + 1, " +
+                updateQuery = "UPDATE Questions SET TimesShown = TimesShown + 1, " +
                         "TimesAnsweredCorrectly = TimesAnsweredCorrectly + 1 " +
                         "WHERE QuestionID = @questionID";
             }
             else
             {
-                updateQuery = "UPDATE Questions SET TimesAnswered = TimesAnswered + 1 " +
+                updateQuery = "UPDATE Questions SET TimesShown = TimesShown + 1 " +
                         "WHERE QuestionID = @questionID";
             }
             using (var updateCommand = new SqlCommand(updateQuery, connection))
@@ -218,6 +204,46 @@ namespace QuizApp
             }
         }
 
+        public List<int> GetSelecetedQuestionsID(List<int> cathegoryIDs, int difficultyLevel)
+        {
+            try
+            {
+                // Generate parameter names for each category
+                var catParams = cathegoryIDs.Select((cat, i) => $"@cat{i}").ToList();
+                string inClause = string.Join(", ", catParams);
+
+                using var connection = new SqlConnection(_connectionString);
+                connection.Open();
+                string query = "SELECT DISTINCT Questions.QuestionID FROM Questions " +
+                    "JOIN CathegoryGrouping ON Questions.QuestionID = CathegoryGrouping.catGroupID " +
+                    "JOIN Cathegory ON CathegoryGrouping.CathegoryID = Cathegory.CathegoryID " +
+                    "WHERE Questions.Difficulty = @Difficulty " +
+                    $"AND Cathegory.CathegoryID IN ({inClause})";
+
+                using var command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@Difficulty", difficultyLevel);
+                // Add each category as a parameter
+                for (int i = 0; i < cathegoryIDs.Count; i++)
+                {
+                    command.Parameters.AddWithValue(catParams[i], cathegoryIDs[i]);
+                }
+
+                List<int> questionIds = new List<int>();
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    questionIds.Add(reader.GetInt32(reader.GetOrdinal("QuestionID")));
+                }
+                return questionIds;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred in method CheckIfCathegoryExists: {ex.Message}");
+                throw new Exception("Error checking cathegory existence", ex);
+            }
+        }
+
+        //TODO - Odstranit - na konci nebude potřeba
         public List<int> GetSelecetedQuestionsID(List<string> cathegories, int difficultyLevel)
         {
             try
@@ -271,7 +297,7 @@ namespace QuizApp
                 {
                     cathegories.Add(Results.GetString(0));
                 }
-                Debug.WriteLine("Cathegories loaded successfully.");
+                Debug.WriteLine("_Cathegories loaded successfully.");
                 return cathegories;
             }
             catch (Exception ex)

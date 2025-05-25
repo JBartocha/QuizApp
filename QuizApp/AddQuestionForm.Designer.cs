@@ -42,7 +42,7 @@
             label4 = new Label();
             comboBox1 = new ComboBox();
             button_CompleteQuestion = new Button();
-            button5 = new Button();
+            button_Zpet = new Button();
             button6 = new Button();
             textBox_PictureDescription = new TextBox();
             label5 = new Label();
@@ -190,15 +190,16 @@
             button_CompleteQuestion.UseVisualStyleBackColor = true;
             button_CompleteQuestion.Click += button_CompeteQuestionClick;
             // 
-            // button5
+            // button_Zpet
             // 
-            button5.ImageAlign = ContentAlignment.BottomCenter;
-            button5.Location = new Point(352, 678);
-            button5.Name = "button5";
-            button5.Size = new Size(164, 39);
-            button5.TabIndex = 17;
-            button5.Text = "Zpet";
-            button5.UseVisualStyleBackColor = true;
+            button_Zpet.ImageAlign = ContentAlignment.BottomCenter;
+            button_Zpet.Location = new Point(352, 678);
+            button_Zpet.Name = "button_Zpet";
+            button_Zpet.Size = new Size(164, 39);
+            button_Zpet.TabIndex = 17;
+            button_Zpet.Text = "Zpet";
+            button_Zpet.UseVisualStyleBackColor = true;
+            button_Zpet.Click += button5_Click;
             // 
             // button6
             // 
@@ -257,7 +258,7 @@
             Controls.Add(label5);
             Controls.Add(textBox_PictureDescription);
             Controls.Add(button6);
-            Controls.Add(button5);
+            Controls.Add(button_Zpet);
             Controls.Add(button_CompleteQuestion);
             Controls.Add(comboBox1);
             Controls.Add(label4);
@@ -295,7 +296,7 @@
         private Label label4;
         private ComboBox comboBox1;
         private Button button_CompleteQuestion;
-        private Button button5;
+        private Button button_Zpet;
         private Button button6;
         private TextBox textBox_PictureDescription;
         private Label label5;
