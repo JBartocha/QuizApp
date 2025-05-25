@@ -24,8 +24,6 @@ namespace QuizApp
         GameSelectionDatabaseOperator _GDO = new();
         Dictionary<string, int> _Cathegories = new();
 
-
-
         public GameSelectionForm()
         {
             _Cathegories = _GDO.Get_All_Cathegories_FromDB();
@@ -79,6 +77,11 @@ namespace QuizApp
 
             using (MainGameForm mainGameForm = new(CathegoryIDs, difficulty, numberOfQuestions))
             {
+                if(CathegoryIDs.Count <= 2)
+                {
+                    MessageBox.Show("Vyberte alespoň tři kategorie pro hru.", "Chyba", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return; // Exit the method if no categories are selected
+                }
                 this.Hide(); // Hide the GameSelectionForm
                 mainGameForm.ShowDialog(); // Show the MainGameForm as a dialog
                 this.Show(); // Show the GameSelectionForm again after the game is finished

@@ -29,8 +29,8 @@ namespace QuizApp
         readonly int _QuestionTotal;
         List<Question> _Questions = new List<Question>();
         private List<int> cathegoryIDs;
-        private int difficulty;
-        private int numberOfQuestions;
+        private readonly int difficulty;
+        private readonly int numberOfQuestions;
         
         /*
         public MainGameForm()
@@ -81,8 +81,6 @@ namespace QuizApp
         {
             InitializeComponent();
 
-            _QuestionTotal = numberOfQuestions;
-            List<int> _cathegoryIDs = cathegoryIDs; 
             this.difficulty = difficulty;
 
             List<int> questionIds = new List<int>();
@@ -90,7 +88,7 @@ namespace QuizApp
 
             // Shuffle and take random elements
             Random rng = new Random();
-            List<int> randomQuestionsID = questionIds.OrderBy(x => rng.Next()).Take(_QuestionTotal).ToList();
+            List<int> randomQuestionsID = questionIds.OrderBy(x => rng.Next()).Take(numberOfQuestions).ToList();
 
             foreach (int questionId in randomQuestionsID)
             {
@@ -199,8 +197,6 @@ namespace QuizApp
                 {
                     button.BackColor = Color.FromArgb(222, 0, 150, 0); // Green for correct answer
                     _CorrectAnswers++; // Increment correct answers count   
-                    label_answers.Text = "Spravné odpovědi: " + _CorrectAnswers.ToString() + "/" + 
-                        _QuestionTotal.ToString() + "(" + _currentQuestionIndex + ")";
                 }
                 else
                 {
@@ -236,6 +232,9 @@ namespace QuizApp
 
         private void ShowAfterSelection()
         {
+            label_answers.Text = "Spravné odpovědi: " + _CorrectAnswers.ToString() + "/" +
+                        _QuestionTotal.ToString() + "(" + _currentQuestionIndex + ")";
+
             button_next.Show();
             if(_Questions[_currentQuestionIndex].QuestionPictureName != null 
                 && _Questions[_currentQuestionIndex].QuestionPictureName != "")

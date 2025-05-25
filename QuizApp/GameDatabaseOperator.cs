@@ -38,7 +38,7 @@ namespace QuizApp
                     string Title = reader.GetString(reader.GetOrdinal("Title"));
                     string Question = reader.GetString(reader.GetOrdinal("Question"));
                     int Difficulty = reader.GetInt32(reader.GetOrdinal("Difficulty"));
-                    pictureId = reader.IsDBNull(reader.GetOrdinal("PictureID")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("PictureID"));
+                    pictureId = reader.IsDBNull(reader.GetOrdinal("PictureID")) ? null : reader.GetInt32(reader.GetOrdinal("PictureID"));
                     string Link = reader.GetString(reader.GetOrdinal("Link"));
                     question.QuestionID = questionId;
                     question.QuestionTitle = Title;
@@ -354,6 +354,7 @@ namespace QuizApp
             }
 
             // Second query to fetch incorrect answers
+            // TODO - not 100% sure if this is correct
             string queryIncorrect = "Select TOP 3 Answer FROM Answers WHERE AnswerGroupID = @AnswerGroupID " +
                 "AND Correct = 0 ORDER BY NEWID();";
             using (var commandIncorrect = new SqlCommand(queryIncorrect, connection))

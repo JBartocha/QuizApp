@@ -20,9 +20,13 @@ namespace QuizApp
             {
                 try
                 {
+                    string fullpath = AppDomain.CurrentDomain.BaseDirectory;
+                    fullpath = fullpath + "Resources\\Images\\" + picturePath;
+
                     PictureBox pictureBox = new PictureBox
                     {
-                        Image = Image.FromFile(picturePath),
+
+                        Image = Image.FromFile(fullpath),
                         SizeMode = PictureBoxSizeMode.Zoom,
                         Dock = DockStyle.Fill
                     };

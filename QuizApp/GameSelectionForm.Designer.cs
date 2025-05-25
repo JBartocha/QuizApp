@@ -39,6 +39,7 @@
             // 
             // comboBox1
             // 
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.Font = new Font("Segoe UI", 18F);
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(1084, 624);
@@ -100,6 +101,7 @@
             // 
             // comboBox_NumberOfQuestions
             // 
+            comboBox_NumberOfQuestions.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox_NumberOfQuestions.Font = new Font("Segoe UI", 18F);
             comboBox_NumberOfQuestions.FormattingEnabled = true;
             comboBox_NumberOfQuestions.Items.AddRange(new object[] { "5", "6", "7", "8", "9", "10" });
