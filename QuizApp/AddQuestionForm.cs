@@ -39,26 +39,6 @@ namespace QuizApp
 
             SetComponents();
 
-            setDefaultValues();
-        }
-
-        private void setDefaultValues()
-        {
-            textBox_MainQuestionText.Text = "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá. " +
-                "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá. " +
-                "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá. " +
-                "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá. " +
-                "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá. " +
-                "Toto je testovací otázka, která by měla být oříznuta, pokud je příliš dlouhá.";
-            textBox1.Text = "Venus,Mars";
-            textBox_LinkAddress.Text = "https://www.google.com/";
-            textBox_PictureDescription.Text = "This is a test description for the image.";
-            textBox_FilePath.Text = "C:\\Users\\Janba\\Pictures\\a5j3K1Jb_700w_0.jpg";
-            textBox_Title.Text = "Test Title";
-            for (int i = 1; i <= 4; i++)
-            {
-                _AnswerBoxes["AnswerTextBox" + i.ToString()].Text = "Test answer " + i.ToString() + ".";
-            }
         }
 
         private void SetComponents()
@@ -151,7 +131,6 @@ namespace QuizApp
         {
             //TODO -    aby se zabranilo zacykleni tak jsou odebrane vsechny
             //          checkboxy eventy a pak se prida zpet
-            //          ale to je blbost, protoze to je zbytecne slozite - zatim nevim alternativu
             if (sender == null) return; // Check if sender is null
             for (int i = 1; i <= _numberOfAnswers; i++)
             {
