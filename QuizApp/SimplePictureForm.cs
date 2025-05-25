@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -21,8 +22,18 @@ namespace QuizApp
                 try
                 {
                     string fullpath = AppDomain.CurrentDomain.BaseDirectory;
-                    fullpath = fullpath + "Resources\\Images\\" + picturePath;
+                    var dirInfo = new DirectoryInfo(fullpath);
 
+                    // Move up three levels: bin -> Debug -> net9.0 -> ProjectRoot
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (dirInfo.Parent != null)
+                            dirInfo = dirInfo.Parent;
+                        else
+                            break;
+                    }
+                    fullpath = dirInfo.FullName + "\\Resources\\Images\\" + picturePath;
+                    Debug.WriteLine($"Full path to image42: {fullpath}");
                     PictureBox pictureBox = new PictureBox
                     {
 

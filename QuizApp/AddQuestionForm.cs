@@ -244,7 +244,18 @@ namespace QuizApp
                 {
                     string source = textBox_FilePath.Text;
                     string destination = AppDomain.CurrentDomain.BaseDirectory;
-                    destination = destination + "Resources\\Images\\" + textBox_FilePath.Text.Split('\\').Last();
+                    var dirInfo = new DirectoryInfo(destination);
+
+                    // Move up three levels: bin -> Debug -> net9.0 -> ProjectRoot
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (dirInfo.Parent != null)
+                            dirInfo = dirInfo.Parent;
+                        else
+                            break;
+                    }
+                    destination = dirInfo.FullName + "\\Resources\\Images\\" + textBox_FilePath.Text.Split('\\').Last();
+                    Debug.WriteLine("Destination42: " + destination);
                     SaveFile(source, destination);
                     question.QuestionPictureName = textBox_FilePath.Text.Split('\\').Last();
                     question.QuestionPictureDescription = textBox_PictureDescription.Text;
