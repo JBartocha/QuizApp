@@ -17,16 +17,16 @@ namespace QuizApp
     public partial class AddQuestionForm : Form
     {
 
-        private static int _numberOfAnswers = 0;
+        private int _numberOfAnswers = 0;
         AddQuestionDatabaseOperator dbOperator = new AddQuestionDatabaseOperator();
 
-        private static Dictionary<string, System.Windows.Forms.TextBox> _AnswerBoxes =
+        private Dictionary<string, System.Windows.Forms.TextBox> _AnswerBoxes =
             new Dictionary<string, System.Windows.Forms.TextBox>();
 
-        private static Dictionary<string, System.Windows.Forms.CheckBox> _AnswerCheckBoxes =
+        private Dictionary<string, System.Windows.Forms.CheckBox> _AnswerCheckBoxes =
             new Dictionary<string, System.Windows.Forms.CheckBox>();
 
-        private static Dictionary<string, int> _DifficultChoices = new Dictionary<string, int>
+        private Dictionary<string, int> _DifficultChoices = new Dictionary<string, int>
             {
             { "Lehká", 3 },
             { "Střední", 5 },

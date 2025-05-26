@@ -104,7 +104,7 @@
             comboBox_NumberOfQuestions.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox_NumberOfQuestions.Font = new Font("Segoe UI", 18F);
             comboBox_NumberOfQuestions.FormattingEnabled = true;
-            comboBox_NumberOfQuestions.Items.AddRange(new object[] { "5", "6", "7", "8", "9", "10" });
+            comboBox_NumberOfQuestions.Items.AddRange(new object[] { "5", "6", "7", "8" });
             comboBox_NumberOfQuestions.Location = new Point(1084, 578);
             comboBox_NumberOfQuestions.Name = "comboBox_NumberOfQuestions";
             comboBox_NumberOfQuestions.Size = new Size(254, 40);

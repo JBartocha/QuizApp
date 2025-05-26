@@ -80,7 +80,6 @@ namespace QuizApp
                 throw new Exception("Error checking cathegory existence", ex);
             }
         }
-
         public void AnswerSelection(int questionID, string[] answers, string? pickedAnswer)
         {
 
