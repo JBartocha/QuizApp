@@ -16,10 +16,10 @@ namespace QuizApp
     {
         private readonly static Dictionary<string, int> _DifficultChoices = new Dictionary<string, int>
             {
-            { "Lehká", 3 },
-            { "Střední", 5 },
-            { "Těžká", 7 },
-            };
+                { "Lehká", 3 },
+                { "Střední", 5 },
+                { "Těžká", 7 },
+            }; 
 
         GameSelectionDatabaseOperator _GDO = new();
         Dictionary<string, int> _Cathegories = new();

@@ -24,7 +24,7 @@ namespace QuizApp
                     string fullpath = AppDomain.CurrentDomain.BaseDirectory;
                     var dirInfo = new DirectoryInfo(fullpath);
 
-                    // Move up three levels: bin -> Debug -> net9.0 -> ProjectRoot
+                    //Move up three levels: bin -> Debug -> net9.0 -> ProjectRoot
                     for (int i = 0; i < 4; i++)
                     {
                         if (dirInfo.Parent != null)
