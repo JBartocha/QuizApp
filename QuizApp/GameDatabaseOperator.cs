@@ -321,8 +321,8 @@ namespace QuizApp
                 string[] pictureData = new string[2];
                 while (reader.Read())
                 {
-                    pictureData[0] = reader.GetString(reader.GetOrdinal("Description"));
-                    pictureData[1] = reader.GetString(reader.GetOrdinal("Filepath"));
+                    pictureData[0] = reader.GetString(reader.GetOrdinal("Filepath"));
+                    pictureData[1] = reader.GetString(reader.GetOrdinal("Description"));
                 }
                 return pictureData;
             }

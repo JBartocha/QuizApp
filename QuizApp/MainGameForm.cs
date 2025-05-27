@@ -32,51 +32,6 @@ namespace QuizApp
         private readonly int difficulty;
         private readonly int numberOfQuestions;
         
-        /*
-        public MainGameForm()
-        {
-            InitializeComponent();
-
-            _QuestionTotal = 10;
-            List<string> cathegories = new List<string> { "venus", "mars", "i dont exists" };
-            List<int> questionIds = new List<int>();
-            //TODO - upravit podle počtu otázek, které si uživatel vybere.
-            questionIds = _GDO.GetSelecetedQuestionsID(cathegories, 3);
-            // Shuffle and take random elements
-            Random rng = new Random();
-            List<int> randomTen = questionIds.OrderBy(x => rng.Next()).Take(_QuestionTotal).ToList();
-
-            foreach (int questionId in randomTen)
-            {
-                _Questions.Add(_GDO.GetQuestion(questionId));
-            }
-              // If there are not enough questions, fill with empty questions
-            _QuestionTotal = _Questions.Count;
-
-            #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            panel1.GetType().GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance
-                | System.Reflection.BindingFlags.NonPublic).SetValue(panel1, true, null);
-            #pragma warning restore CS8602 // Dereference of a possibly null reference.
-
-            _surface = new Bitmap(panel1.Width, panel1.Height);
-            _grap = Graphics.FromImage(_surface);
-            panel1.BackgroundImage = _surface;
-            panel1.BackgroundImageLayout = ImageLayout.None;
-            label_answers.Text = "Spravné odpovědi: " + _CorrectAnswers.ToString() + "/" +
-                _QuestionTotal.ToString() + "(" + _currentQuestionIndex + 1 + ")";
-
-            ResetClock();
-
-            PeriodicTimer timer = new PeriodicTimer(TimeSpan.FromMilliseconds(1000));
-
-            button_next.Hide();
-
-            Task<bool> task = TimerForClock();
-
-            ResetComponents();
-            SetQuestion();
-        }
-        */
         public MainGameForm(List<int> cathegoryIDs, int difficulty, int numberOfQuestions)
         {
             InitializeComponent();
@@ -295,7 +250,12 @@ namespace QuizApp
 
         private void button_Picture_Click(object sender, EventArgs e)
         {
-            Form pictureForm = new SimplePictureForm(_Questions[_currentQuestionIndex].QuestionPictureName);
+            this.Hide();
+            using (Form pictureForm = new SimplePictureForm(_Questions[_currentQuestionIndex].QuestionPictureName))
+            {
+                pictureForm.ShowDialog();
+            }
+            this.Show();
         }
     }
 }
