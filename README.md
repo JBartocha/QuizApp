@@ -7,15 +7,17 @@ Aplikace s menu pro snadnější orientaci mezi jejími funkcemi. jádro hry umo
 **Popis funkcí**
 
 Menu:
-	-Začít hru
-	-Přidat Otázku
-	-Zobrazit statistiky
+
+*   Začít hru
+* Přidat Otázku
+* Zobrazit statistiky
 
 po kliknutí se otevře okno pro výběr kritérií podle kterých se budou vybírat otázky a jejich počet. 
 Tyto kritéria jsou:
-	- Kategorie otázek
-	- Počet otázek
-	- Obtížnost otázek
+
+* Kategorie otázek
+* Počet otázek
+* Obtížnost otázek
 
 Okno pro zobrazování otázek vybere vždy 4 možné odpovědi (právě a jen jedna je správná) a zobrazí společně s ostatními informacemi o otázce na kterou je 60 sekund na odpověď (v okně je zobrazeno počítadlo času).
 Po výběru odpovědi jsou zobrazeny dodatečné informace ke správné odpovědi (URL link s informacemi o odpovědi). Také pokud byl k otázce přidáno v databázi(volitelné) - zobrazí se tlačítko, které může zobrazit obrázek týkající se dodatečné informace k odpovědi.
@@ -33,6 +35,6 @@ Aplikace pracuje s daty uvnitř lokální databáze (MSSQL .mdf přiřazen):
 
 ### TODO
 
-- Přidat mnohem více Otázek (aktuálně funguje jen Lehká obtížnost protože v ostatních obtížnostech nejsou data v databázi).
-- ~~Opravit náhodný výběr odpovědí(aktuálně vybere náhodné odpovědi ale pokaždé stejné (jako by se generátor náhodných číšel pro výběr opakoval).~~
-- Vytvořit dvouvrstvou stromovitou strukturu pro vytvoření subkategorii pro další rozdělení otázek.
+    - Přidat mnohem více Otázek (aktuálně funguje jen Lehká obtížnost protože v ostatních obtížnostech nejsou data v databázi).
+    - ~~Opravit náhodný výběr odpovědí(aktuálně vybere náhodné odpovědi ale pokaždé stejné (jako by se generátor náhodných číšel pro výběr opakoval).~~
+    - Vytvořit dvouvrstvou stromovitou strukturu pro vytvoření subkategorii pro další rozdělení otázek.
