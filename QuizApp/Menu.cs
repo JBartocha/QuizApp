@@ -34,6 +34,7 @@ namespace QuizApp
 
         private void buttonStatistics_Click(object sender, EventArgs e)
         {
+            // TODO : Implement statistics form
             return;
             this.Hide();
             using (Form statisticsForm = new StatisticsForm())
@@ -41,7 +42,6 @@ namespace QuizApp
                 statisticsForm.ShowDialog();
             }
             this.Show();
-            // TODO : Implement statistics form
         }
     }
 }

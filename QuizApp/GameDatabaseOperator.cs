@@ -176,20 +176,17 @@ namespace QuizApp
 
             // 4. ZAPISANI STATISTIK v tabulce Answers 
             // 4.1 ZAPSANI STATISTIK zobrazenych odpovedi
-            // TODO - tady je možná chyba při vkládání do statistik
-            foreach (var ans in answersID)
+            string updateShownQuery = "UPDATE Answers SET TimesShown = TimesShown + 1 WHERE AnswersID " +
+                "IN (" + string.Join(", ", answersID.Select((a, i) => $"@answersID{i}")) + ")";
+            using (var updateShownCmd = new SqlCommand(updateShownQuery, connection))
             {
-                string updateShownQuery = "UPDATE Answers SET TimesShown = TimesShown + 1 WHERE AnswersID " +
-                    "IN (" + string.Join(", ", answersID.Select((a, i) => $"@answersID{i}")) + ")";
-                using (var updateShownCmd = new SqlCommand(updateShownQuery, connection))
+                for (int i = 0; i < answersID.Length; i++)
                 {
-                    for (int i = 0; i < answersID.Length; i++)
-                    {
-                        updateShownCmd.Parameters.AddWithValue($"@answersID{i}", answersID[i]);
-                    }
-                    updateShownCmd.ExecuteNonQuery();
+                    updateShownCmd.Parameters.AddWithValue($"@answersID{i}", answersID[i]);
                 }
+                updateShownCmd.ExecuteNonQuery();
             }
+  
             // 4.2 ZAPSANI STATISTIKY vybrane odpovedi
             if (!string.IsNullOrEmpty(pickedAnswer))
             {
