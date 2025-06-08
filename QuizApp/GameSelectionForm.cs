@@ -21,12 +21,11 @@ namespace QuizApp
                 { "Těžká", 7 },
             }; 
 
-        GameSelectionDatabaseOperator _GDO = new();
         Dictionary<string, int> _Cathegories = new();
 
         public GameSelectionForm()
         {
-            _Cathegories = _GDO.Get_All_Cathegories_FromDB();
+            _Cathegories = GameSelectionDatabaseOperator.Get_All_Cathegories_FromDB();
             int index = 0;
             int MaxIndexperColumn = 5; // Maximum number of items per column
 

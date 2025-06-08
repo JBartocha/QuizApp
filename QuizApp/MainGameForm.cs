@@ -31,7 +31,7 @@ namespace QuizApp
         private List<int> cathegoryIDs;
         private readonly int difficulty;
         private readonly int numberOfQuestions;
-        
+
         public MainGameForm(List<int> cathegoryIDs, int difficulty, int numberOfQuestions)
         {
             InitializeComponent();
@@ -52,12 +52,7 @@ namespace QuizApp
             // If there are not enough questions, fill with empty questions
             _QuestionTotal = _Questions.Count;
 
-
-            // Buffering clocks to remove flickering
-            #pragma warning disable CS8602 // Dereference of a possibly null reference.
-            panel1.GetType().GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance
-                | System.Reflection.BindingFlags.NonPublic).SetValue(panel1, true, null);
-            #pragma warning restore CS8602 // Dereference of a possibly null reference.
+            SetBufferingForMainPanel();
 
             _surface = new Bitmap(panel1.Width, panel1.Height);
             _grap = Graphics.FromImage(_surface);
@@ -75,13 +70,22 @@ namespace QuizApp
             SetQuestion();
         }
 
+        void SetBufferingForMainPanel()
+        {
+            // Buffering clocks to remove flickering
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+            panel1.GetType().GetProperty("DoubleBuffered", System.Reflection.BindingFlags.Instance
+                | System.Reflection.BindingFlags.NonPublic).SetValue(panel1, true, null);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+        }
+
         private void SetQuestion()
         {
             label_Title.Text = _Questions[_currentQuestionIndex].QuestionTitle;
             richTextBox1.Text = _Questions[_currentQuestionIndex].QuestionText;
             label_Time.Text = _QuestionTime.ToString();
-            linkLabel1.Text = _Questions[_currentQuestionIndex].QuestionLink;
-            
+            linkLabel.Text = _Questions[_currentQuestionIndex].QuestionLink;
+
             for (int i = 0; i < 4; i++)
             {
                 Button? button = this.Controls.Find("button" + i, true).FirstOrDefault() as Button;
@@ -118,21 +122,101 @@ namespace QuizApp
                     _Timer.Dispose();
                     panel1.Invalidate();
                     label_Time.Text = "00";
-                    ShowAfterSelection();
+                    
                     Button? correctAnswerButton = this.Controls.Find("button" +
                         _Questions[_currentQuestionIndex].CorrentAnswer, true).FirstOrDefault() as Button;
                     if (correctAnswerButton != null)
                     {
                         correctAnswerButton.BackColor = Color.FromArgb(222, 0, 150, 0);
                     }
+                   
+                    _GDO.AnswerSelection(_Questions[_currentQuestionIndex].QuestionID,
+                    _Questions[_currentQuestionIndex].Answers.ToArray(),
+                    null);
+                 
+                    ShowAfterSelection();
                     return false;
-                    //TODO - handle statistics for question timeout
+                    
                 }
             }
             return true;
         }
 
-        private void button1_MouseCaptureChanged(object sender, EventArgs e) // TODO - change to MouseClick
+        private void ShowAfterSelection()
+        {
+            button_next.Show();
+            if (_Questions[_currentQuestionIndex].QuestionPictureName != null
+                && _Questions[_currentQuestionIndex].QuestionPictureName != "")
+            {
+                button_Picture.Show();
+            }
+            linkLabel.Show();
+
+            _currentQuestionIndex++;
+            label_answers.Text = "Spravné odpovědi: " + _CorrectAnswers.ToString() + "/" +
+                        _QuestionTotal.ToString() + "(" + _currentQuestionIndex + ")";
+        }
+
+        private void ResetClock()
+        {
+            Brush brush1 = new SolidBrush(Color.FromArgb(255, 0, 153, 255));
+            Brush brush2 = new SolidBrush(Color.FromArgb(255, 240, 240, 240));
+            _grap.FillEllipse(brush1, 0, 0, panel1.Width - 1, panel1.Height - 1);
+            _grap.FillEllipse(brush2, 40, 40, panel1.Width - 80, panel1.Height - 80);
+
+            panel1.Invalidate();
+            _RemainingTime = _QuestionTime;
+            label_Time.Text = _QuestionTime.ToString();
+        }
+
+        private void ResetComponents()
+        {
+            ResetClock();
+
+            button_Picture.Hide();
+            button_next.Hide();
+            linkLabel.Hide();
+            linkLabel.Links.Clear();
+            linkLabel.Links.Add(0, linkLabel.Text.Length);
+            _answerSelected = false;
+        }
+
+        private void button_next_Click(object sender, EventArgs e)
+        {
+            ResetComponents();
+            SetQuestion();
+            Task<bool> task = TimerForClock();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+
+            string url = linkLabel.Text;
+            try
+            {
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Unable to open link: " + ex.Message);
+            }
+        }
+
+        private void button_Picture_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            using (Form pictureForm = new SimplePictureForm(_Questions[_currentQuestionIndex].QuestionPictureName))
+            {
+                pictureForm.ShowDialog();
+            }
+            this.Show();
+        }
+
+        private void button_MouseClick(object sender, MouseEventArgs e)
         {
             if (_answerSelected)
                 return; // Prevent multiple selections
@@ -177,85 +261,12 @@ namespace QuizApp
 
             ShowAfterSelection();
 
-            if (++_currentQuestionIndex == _QuestionTotal)
+            if (_currentQuestionIndex == _QuestionTotal)
             {
                 MessageBox.Show("Konec hry! Správné odpovědi: " + _CorrectAnswers + "/" + _QuestionTotal);
                 this.Close(); // Or navigate to a results form
                 return;
             }
-        }
-
-        private void ShowAfterSelection()
-        {
-            label_answers.Text = "Spravné odpovědi: " + _CorrectAnswers.ToString() + "/" +
-                        _QuestionTotal.ToString() + "(" + _currentQuestionIndex + ")";
-
-            button_next.Show();
-            if(_Questions[_currentQuestionIndex].QuestionPictureName != null 
-                && _Questions[_currentQuestionIndex].QuestionPictureName != "")
-            {
-                button_Picture.Show();
-            }
-            linkLabel1.Show();
-        }
-
-        private void ResetClock()
-        {
-            Brush brush1 = new SolidBrush(Color.FromArgb(255, 0, 153, 255));
-            Brush brush2 = new SolidBrush(Color.FromArgb(255, 240, 240, 240));
-            _grap.FillEllipse(brush1, 0, 0, panel1.Width - 1, panel1.Height - 1);
-            _grap.FillEllipse(brush2, 40, 40, panel1.Width - 80, panel1.Height - 80);
-
-            panel1.Invalidate();
-            _RemainingTime = _QuestionTime;
-            label_Time.Text = _QuestionTime.ToString();
-        }
-
-        private void ResetComponents()
-        {
-            ResetClock();
-
-            button_Picture.Hide();
-            button_next.Hide();
-            linkLabel1.Hide();
-            linkLabel1.Links.Clear();
-            linkLabel1.Links.Add(0, linkLabel1.Text.Length);
-            _answerSelected = false;
-        }
-
-        private void button_next_Click(object sender, EventArgs e)
-        {
-            ResetComponents();
-            SetQuestion();
-            Task<bool> task = TimerForClock();
-        }
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-
-            string url = linkLabel1.Text;
-            try
-            {
-                System.Diagnostics.Process.Start(new ProcessStartInfo
-                {
-                    FileName = url,
-                    UseShellExecute = true
-                });
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to open link: " + ex.Message);
-            }
-        }
-
-        private void button_Picture_Click(object sender, EventArgs e)
-        {
-            this.Hide();
-            using (Form pictureForm = new SimplePictureForm(_Questions[_currentQuestionIndex].QuestionPictureName))
-            {
-                pictureForm.ShowDialog();
-            }
-            this.Show();
         }
     }
 }

@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 
 namespace QuizApp
 {
-    internal class GameSelectionDatabaseOperator
+    internal static class GameSelectionDatabaseOperator
     {
-        private readonly string _connectionString = "";
+        private readonly static string _connectionString;
 
-        public GameSelectionDatabaseOperator()
+        // Static constructor to initialize the static readonly field
+        static GameSelectionDatabaseOperator()
         {
             _connectionString = ConnectionString.Get();
         }
 
-        public Dictionary<string, int> Get_All_Cathegories_FromDB()
+        public static Dictionary<string, int> Get_All_Cathegories_FromDB()
         {
             try
             {

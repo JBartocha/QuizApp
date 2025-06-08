@@ -87,6 +87,7 @@ public class AddQuestionDatabaseOperator
         {
             LastPicturesID = Add_PictureTable_Insert(question);
         }
+
         // 2.QUESTION INSERTION
         QuestionID = Add_QuestionTable_Insert(question.QuestionTitle, question.QuestionText,
             question.QuestionDifficulty, question.QuestionLink, LastPicturesID);

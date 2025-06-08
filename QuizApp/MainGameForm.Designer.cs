@@ -30,7 +30,7 @@
         {
             panel2 = new Panel();
             button_Picture = new Button();
-            linkLabel1 = new LinkLabel();
+            linkLabel = new LinkLabel();
             button_next = new Button();
             button1 = new Button();
             button3 = new Button();
@@ -50,7 +50,7 @@
             // 
             panel2.BackColor = SystemColors.Window;
             panel2.Controls.Add(button_Picture);
-            panel2.Controls.Add(linkLabel1);
+            panel2.Controls.Add(linkLabel);
             panel2.Location = new Point(12, 614);
             panel2.Name = "panel2";
             panel2.Size = new Size(1108, 103);
@@ -66,18 +66,18 @@
             button_Picture.UseVisualStyleBackColor = true;
             button_Picture.Click += button_Picture_Click;
             // 
-            // linkLabel1
+            // linkLabel
             // 
-            linkLabel1.AccessibleName = "";
-            linkLabel1.AutoSize = true;
-            linkLabel1.LinkArea = new LinkArea(0, 10);
-            linkLabel1.Location = new Point(3, 82);
-            linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new Size(60, 15);
-            linkLabel1.TabIndex = 0;
-            linkLabel1.TabStop = true;
-            linkLabel1.Text = "linkLabel1";
-            linkLabel1.LinkClicked += linkLabel1_LinkClicked;
+            linkLabel.AccessibleName = "";
+            linkLabel.AutoSize = true;
+            linkLabel.LinkArea = new LinkArea(0, 10);
+            linkLabel.Location = new Point(3, 82);
+            linkLabel.Name = "linkLabel";
+            linkLabel.Size = new Size(60, 15);
+            linkLabel.TabIndex = 0;
+            linkLabel.TabStop = true;
+            linkLabel.Text = "linkLabel1";
+            linkLabel.LinkClicked += linkLabel1_LinkClicked;
             // 
             // button_next
             // 
@@ -98,7 +98,7 @@
             button1.TabIndex = 3;
             button1.Text = "1";
             button1.UseVisualStyleBackColor = true;
-            button1.MouseCaptureChanged += button1_MouseCaptureChanged;
+            button1.MouseClick += button_MouseClick;
             // 
             // button3
             // 
@@ -109,7 +109,7 @@
             button3.TabIndex = 2;
             button3.Text = "3";
             button3.UseVisualStyleBackColor = true;
-            button3.MouseCaptureChanged += button1_MouseCaptureChanged;
+            button3.MouseClick += button_MouseClick;
             // 
             // button2
             // 
@@ -120,7 +120,7 @@
             button2.TabIndex = 1;
             button2.Text = "2";
             button2.UseVisualStyleBackColor = true;
-            button2.MouseCaptureChanged += button1_MouseCaptureChanged;
+            button2.MouseClick += button_MouseClick;
             // 
             // button0
             // 
@@ -131,7 +131,7 @@
             button0.TabIndex = 0;
             button0.Text = "0";
             button0.UseVisualStyleBackColor = true;
-            button0.MouseCaptureChanged += button1_MouseCaptureChanged;
+            button0.MouseClick += button_MouseClick;
             // 
             // richTextBox1
             // 
@@ -229,7 +229,7 @@
         private Label label_Title;
         private Label label_Difficulty;
         private Label label_Time;
-        private LinkLabel linkLabel1;
+        private LinkLabel linkLabel;
         private Button button_Picture;
         private Label label_answers;
     }
